@@ -12,8 +12,8 @@ const ProtectedRoute = ({ children }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#D0FF00] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -30,8 +30,8 @@ const PublicRoute = ({ children }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#D0FF00] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -47,7 +47,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-[#050505]">
+        <div className="min-h-screen">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={
@@ -70,9 +70,11 @@ function App() {
             position="bottom-right"
             toastOptions={{
               style: {
-                background: '#0A0A0A',
-                border: '1px solid #D0FF00',
-                color: '#EDEDED',
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(148, 163, 184, 0.3)',
+                color: '#1E293B',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
               },
             }}
           />
