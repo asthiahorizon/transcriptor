@@ -650,7 +650,7 @@ async def process_transcription(video_id: str, file_path: str):
         
         # Extract audio from video
         audio_path = file_path.rsplit('.', 1)[0] + '.mp3'
-        cmd = ['ffmpeg', '-y', '-i', file_path, '-vn', '-acodec', 'libmp3lame', '-q:a', '4', audio_path]
+        cmd = ['/usr/bin/ffmpeg', '-y', '-i', file_path, '-vn', '-acodec', 'libmp3lame', '-q:a', '4', audio_path]
         subprocess.run(cmd, capture_output=True, check=True)
         
         await db.videos.update_one({"id": video_id}, {"$set": {"progress": 30}})
