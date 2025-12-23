@@ -233,6 +233,20 @@ class TranscriptorIAAPITester:
 
     def test_project_operations(self):
         """Test project CRUD operations"""
+        # First try to grant subscription if we have admin access
+        if self.admin_token and hasattr(self, 'test_user_id'):
+            user_token = self.token
+            self.token = self.admin_token
+            
+            self.run_test(
+                "Grant Subscription to Test User",
+                "POST",
+                f"admin/users/{self.test_user_id}/grant-subscription?days=30",
+                200
+            )
+            
+            self.token = user_token
+        
         # Create project
         project_data = {
             "name": "Test Project",
