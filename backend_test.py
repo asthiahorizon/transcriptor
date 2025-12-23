@@ -403,6 +403,27 @@ class TranscriptorIAAPITester:
         
         return True
 
+    def test_subscription_endpoints(self):
+        """Test subscription-related endpoints"""
+        if not self.token:
+            self.log_test("Subscription Endpoints", False, "No user token available")
+            return False
+        
+        # Test checkout creation (will fail without valid Stripe setup, but should return proper error)
+        checkout_data = {
+            "origin_url": "https://test.com"
+        }
+        
+        self.run_test(
+            "Create Subscription Checkout",
+            "POST",
+            "subscription/checkout",
+            200,  # May return error but should be handled gracefully
+            data=checkout_data
+        )
+        
+        return True
+
     def cleanup(self):
         """Clean up test data"""
         if hasattr(self, 'test_video_id'):
