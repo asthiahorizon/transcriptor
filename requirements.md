@@ -1,69 +1,65 @@
-# CineScript - Video Transcription & Subtitling App
+# TranscriptorIA - Application de Transcription et Sous-titrage Vidéo
 
-## Original Problem Statement
+## Problème Original
 Application web permettant de:
-- Transcrire des vidéos automatiquement
+- Transcrire des vidéos automatiquement avec IA privée (Infomaniak)
 - Traduire les transcriptions dans d'autres langues
-- Éditer les sous-titres avec les segments et timecodes
+- Éditer les sous-titres avec segments et timecodes
 - Exporter les vidéos avec sous-titres incrustés
 - Gestion de projets et comptes utilisateurs
 
-## User Choices
+## Choix Utilisateur
 - **Transcription**: OpenAI Whisper
-- **Translation**: OpenAI GPT (gpt-5.1)
-- **Authentication**: JWT (email/password)
-- **File Size**: No limit
-- **Design**: Glassmorphism clair et moderne (pas de timeline en bas)
-- **API Key**: Emergent LLM Key (universal key)
+- **Traduction**: OpenAI GPT (gpt-5.1)
+- **Authentification**: JWT (email/mot de passe)
+- **Taille fichier**: Pas de limite
+- **Design**: Glassmorphism clair et moderne (style liquid glass)
+- **Nom**: TranscriptorIA
+- **Footer**: Asthia Horizon Sàrl
+- **Confidentialité**: Message sur l'IA privée Infomaniak
 
 ## Architecture
 
 ### Backend (FastAPI)
-- **Authentication**: JWT-based with bcrypt password hashing
-- **Database**: MongoDB with Motor async driver
-- **Video Processing**: FFmpeg for audio extraction and subtitle burning
-- **AI Services**: emergentintegrations library for OpenAI Whisper & GPT
+- **Authentification**: JWT avec bcrypt
+- **Base de données**: MongoDB avec Motor async
+- **Traitement vidéo**: FFmpeg pour extraction audio et incrustation sous-titres
+- **Services IA**: emergentintegrations pour OpenAI Whisper & GPT
 
 ### Frontend (React)
-- **UI Framework**: Shadcn/UI components
-- **Styling**: Tailwind CSS with glassmorphism theme
-- **State Management**: React Context for auth
+- **Framework UI**: Shadcn/UI
+- **Styling**: Tailwind CSS avec thème glassmorphism
+- **Gestion d'état**: React Context pour auth
 - **Routing**: React Router v7
 
-### Design Theme
-- **Style**: Light glassmorphism (liquid glass)
-- **Background**: Pastel gradient (purple/pink/white)
-- **Cards**: Frosted glass effect with backdrop-filter blur
-- **Colors**: Indigo (#6366F1) primary, Purple (#8B5CF6) secondary
-- **Typography**: Plus Jakarta Sans (headings), Inter (body)
+### Design
+- **Style**: Glassmorphism clair (liquid glass)
+- **Fond**: Dégradé pastel (violet/rose/blanc)
+- **Cartes**: Effet verre avec backdrop-filter blur
+- **Couleurs**: Indigo (#6366F1), Violet (#8B5CF6)
+- **Police**: Plus Jakarta Sans (titres), Inter (corps)
+- **Langue UI**: Français
 
-### Key Endpoints
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `GET /api/projects` - List user projects
-- `POST /api/projects` - Create project
-- `POST /api/projects/{id}/videos` - Upload video
-- `POST /api/videos/{id}/transcribe` - Start transcription
-- `POST /api/videos/{id}/translate` - Start translation
-- `PUT /api/videos/{id}/subtitles` - Update subtitles
-- `PUT /api/videos/{id}/settings` - Update subtitle settings
-- `POST /api/videos/{id}/export` - Export video with subtitles
+## Fonctionnalités Implémentées
+1. ✅ Authentification (inscription/connexion/déconnexion)
+2. ✅ CRUD projets
+3. ✅ Upload vidéo avec détection durée FFmpeg
+4. ✅ Transcription OpenAI Whisper (segments + timecodes)
+5. ✅ Traduction OpenAI GPT
+6. ✅ Éditeur sous-titres (original + traduction)
+7. ✅ Paramètres sous-titres (taille, couleur, fond, position)
+8. ✅ Export vidéo avec sous-titres FFmpeg
+9. ✅ Design glassmorphism clair
+10. ✅ Pastilles de langue (source/traduction)
+11. ✅ Scroll auto vers segment actif
+12. ✅ Textarea auto-resize pour traductions
+13. ✅ Boutons Générer ET Télécharger toujours visibles
+14. ✅ Message confidentialité IA privée Infomaniak
+15. ✅ Footer "Asthia Horizon Sàrl"
+16. ✅ UI en français
 
-## Completed Tasks
-1. ✅ User authentication (register/login/logout)
-2. ✅ Project CRUD operations
-3. ✅ Video upload with FFmpeg duration detection
-4. ✅ Transcription with OpenAI Whisper (segments with timecode)
-5. ✅ Translation with OpenAI GPT
-6. ✅ Subtitle editing interface (original + translated)
-7. ✅ Subtitle settings (font size, color, background, position)
-8. ✅ Video export with FFmpeg subtitle burning
-9. ✅ Glassmorphism light design (no timeline at bottom)
-10. ✅ Video player with subtitle overlay preview
-
-## Next Tasks
-1. Add SRT/VTT subtitle file export
-2. Add batch video upload
-3. Real-time progress tracking for long operations
-4. Keyboard shortcuts for video playback
-5. Undo/redo for subtitle editing
+## Prochaines Étapes
+1. Export fichiers SRT/VTT séparément
+2. Barre de progression en temps réel
+3. Raccourcis clavier
+4. Undo/redo édition sous-titres
