@@ -1,0 +1,186 @@
+{
+  "brand_identity": {
+    "name": "CineScript",
+    "metaphor": "The Neon Darkroom",
+    "emotional_tone": "Precision, Cinematic, Electric, Professional",
+    "archetype": "Electric & Neon (Future/Speed) mixed with Swiss Utility",
+    "design_principles": [
+      "Fusion: Cinema aesthetics x Code editor utility",
+      "Contrast: High-vis actions (Lime) against Deep Void (Black)",
+      "Density: Information-rich interfaces for power users",
+      "Tactility: Micro-interactions that feel like physical switches"
+    ]
+  },
+  "typography": {
+    "primary_font": "Manrope",
+    "secondary_font": "Syne",
+    "mono_font": "JetBrains Mono",
+    "usage": {
+      "headings": {
+        "font": "Syne",
+        "weights": ["700", "800"],
+        "tracking": "tight",
+        "case": "uppercase for top-level headers"
+      },
+      "body": {
+        "font": "Manrope",
+        "weights": ["400", "500"],
+        "leading": "relaxed"
+      },
+      "ui_labels": {
+        "font": "Manrope",
+        "weights": ["600"],
+        "case": "uppercase",
+        "tracking": "widest",
+        "size": "text-xs"
+      },
+      "subtitles_editor": {
+        "font": "JetBrains Mono",
+        "weights": ["400"],
+        "note": "Critical for timecode alignment and subtitle preview"
+      }
+    }
+  },
+  "colors": {
+    "palette": {
+      "background": {
+        "default": "#050505",
+        "paper": "#0A0A0A",
+        "surface": "#121212"
+      },
+      "primary": {
+        "main": "#D0FF00",
+        "hover": "#B8E600",
+        "foreground": "#000000",
+        "description": "Acid Lime - Use for Primary Actions (Export, Play, Confirm)"
+      },
+      "secondary": {
+        "main": "#6E44FF",
+        "hover": "#5B33E6",
+        "foreground": "#FFFFFF",
+        "description": "Electric Violet - Use for AI Features (Transcribe, Translate)"
+      },
+      "text": {
+        "primary": "#EDEDED",
+        "secondary": "#A1A1AA",
+        "muted": "#52525B"
+      },
+      "border": {
+        "default": "#27272A",
+        "active": "#3F3F46"
+      },
+      "status": {
+        "success": "#D0FF00",
+        "error": "#FF4D4D",
+        "warning": "#FFD600"
+      }
+    },
+    "gradients": {
+      "hero_glow": "radial-gradient(circle at 50% 50%, rgba(110, 68, 255, 0.15) 0%, rgba(5, 5, 5, 0) 70%)",
+      "active_border": "linear-gradient(90deg, #D0FF00 0%, transparent 100%)"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": {
+      "style": "backdrop-blur-xl bg-black/40 border border-white/10",
+      "usage": "Sticky headers, floating toolbars, modal overlays"
+    },
+    "borders": {
+      "radius": "rounded-sm",
+      "width": "1px",
+      "style": "solid"
+    },
+    "shadows": {
+      "glow": "0 0 20px rgba(208, 255, 0, 0.15)",
+      "depth": "0 8px 32px rgba(0, 0, 0, 0.4)"
+    },
+    "textures": {
+      "noise": "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E\")"
+    }
+  },
+  "layout_strategies": {
+    "landing_page": {
+      "type": "Asymmetric Hero",
+      "structure": "Split screen with massive typography on left, immersive video/image on right with 'glitch' effects.",
+      "grid": "12-column grid with overlapping elements"
+    },
+    "dashboard": {
+      "type": "The Control Room",
+      "structure": "Dense grid of project cards. Sidebar for navigation. Top bar for global search/actions.",
+      "card_style": "Minimalist, image-heavy (video thumbnails), visible metadata (duration, language)"
+    },
+    "editor": {
+      "type": "Three-Pane Studio",
+      "structure": "Left: Video Player (Fixed aspect ratio). Right: Transcript/Translation Editor (Scrollable). Bottom: Timeline (Horizontal scroll).",
+      "spacing": "Compact (p-2 or p-4) to maximize workspace"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#D0FF00] text-black hover:bg-[#B8E600] rounded-sm font-bold uppercase tracking-wide shadow-[0_0_15px_rgba(208,255,0,0.3)] transition-all hover:scale-105",
+      "secondary": "bg-[#6E44FF] text-white hover:bg-[#5B33E6] rounded-sm font-medium",
+      "ghost": "hover:bg-white/10 text-white rounded-sm"
+    },
+    "cards": {
+      "base": "bg-[#0A0A0A] border border-white/10 hover:border-[#D0FF00]/50 transition-colors group relative overflow-hidden rounded-sm",
+      "hover_effect": "Show 'Play' icon overlay on hover"
+    },
+    "inputs": {
+      "style": "bg-black/50 border-white/20 focus:border-[#D0FF00] rounded-sm text-white placeholder:text-white/30"
+    },
+    "timeline": {
+      "track": "bg-[#1A1A1A] h-24 border-b border-white/5 relative",
+      "clip": "bg-[#6E44FF]/80 border border-[#6E44FF] rounded-sm h-20 absolute top-2 cursor-pointer hover:brightness-110",
+      "cursor": "w-px h-full bg-[#D0FF00] absolute top-0 z-50 shadow-[0_0_10px_#D0FF00]"
+    }
+  },
+  "image_urls": {
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1649456674221-12b66d8a6fa8?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Professional editor in dark studio",
+      "treatment": "Overlay with black gradient (opacity 80%) to ensure text readability"
+    },
+    "feature_transcription": {
+      "url": "https://images.unsplash.com/photo-1759912804199-a104b710a308?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Abstract sound wave visualization",
+      "treatment": "Use as a background for the 'AI Transcription' feature card"
+    },
+    "feature_creative": {
+      "url": "https://images.unsplash.com/photo-1639192361244-98775fed5c51?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Creative studio lighting",
+      "treatment": "Use for 'Creative Control' section"
+    },
+    "audience_creators": {
+      "url": "https://images.unsplash.com/photo-1576714645198-7eebf227a483?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Filmmaker on set",
+      "treatment": "Grayscale with high contrast"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Implement the 'Acid Lime' (#D0FF00) sparingly. Only for the most critical actions.",
+    "Ensure the Video Player in the editor is the visual anchor. It should never be obscured.",
+    "The Timeline component is complex. Use a virtualized list or canvas if performance drops, but start with CSS Grid/Flex for MVP.",
+    "Use 'Syne' font for the Landing Page headings to give it that 'Awwwards' feel.",
+    "For the Dashboard, do NOT use a simple table. Use a grid of 'Project Cards' that look like movie posters or video thumbnails.",
+    "Authentication pages should feel like entering a secure facility. Minimalist, dark, centered.",
+    "Use the 'sonner' library for all notifications (Toasts). Style them dark with lime borders."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy",
+    "Use glass-morphism effects with backdrop filters (12-24px blur)",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file. This disrupts the human natural reading flow of text",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories (especially sponsor logos) = main agent will use placeholder text which is FORBIDDEN",
+    "Prioritize using pre-existing components from src/components/ui when applicable",
+    "Components MUST use named exports (export const ComponentName = ...)",
+    "Pages MUST use default exports (export default function PageName() {...})",
+    "Use sonner for toasts"
+  ]
+}
