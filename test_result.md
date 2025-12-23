@@ -101,3 +101,128 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "TranscriptorIA App - Application de transcription et traduction vidéo avec: 1) Bug téléchargement 'Not Authenticated' corrigé, 2) Lecteur vidéo synchronisé avec segments, 3) Ajout de toutes les langues du monde pour la traduction"
+
+backend:
+  - task: "User Authentication (JWT)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Authentication JWT implemented and working"
+
+  - task: "Video Download with Auth Token"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Fixed - Download now requires subscription auth via require_subscription dependency"
+
+  - task: "Stripe Subscription System"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Stripe checkout implemented, needs verification"
+
+  - task: "Admin Panel - List Users"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Admin users endpoint implemented"
+
+frontend:
+  - task: "Download Button with Auth Token"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/EditorPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported 'Not Authenticated' error on download"
+      - working: "NA"
+        agent: "main"
+        comment: "Fixed - handleDownload now uses axios with Bearer token from localStorage and creates blob download"
+
+  - task: "Video Player Sync with Segments"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/EditorPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported video player does not follow segment selection"
+      - working: "NA"
+        agent: "main"
+        comment: "Fixed - handleSeek improved, onClick now sets activeSegmentIndex and seeks video"
+
+  - task: "World Languages for Translation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/EditorPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added 80+ languages covering all regions: Europe, Asia, Middle East, Africa, Americas"
+
+  - task: "Landing Page"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/LandingPage.js"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Glassmorphism design, privacy messaging, Infomaniak AI mention"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+
+test_plan:
+  current_focus:
+    - "Download Button with Auth Token"
+    - "Video Player Sync with Segments"
+    - "World Languages for Translation"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Fixed 3 priority issues: 1) Download now uses axios with Bearer token instead of window.open, 2) Video player handleSeek improved and onClick sets segment index, 3) Added 80+ world languages. Please test: login as admin (admin@transcriptoria.com / admin123456), upload a video, transcribe, check language dropdown has many options, translate, generate video, and test download button. Verify video seeks to correct position when clicking segments."
