@@ -428,10 +428,14 @@ export default function EditorPage() {
             <button
               onClick={handleSaveSubtitles}
               disabled={saving || segments.length === 0}
-              className="btn-ghost py-2 px-4 flex items-center gap-2"
+              className={`py-2 px-4 flex items-center gap-2 rounded-xl font-medium transition-all ${
+                hasLocalChanges 
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg' 
+                  : 'btn-ghost'
+              }`}
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              Sauvegarder
+              {hasLocalChanges ? 'Sauvegarder *' : 'Sauvegarder'}
             </button>
           </div>
         </div>
