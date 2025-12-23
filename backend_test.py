@@ -444,16 +444,22 @@ class TranscriptorIAAPITester:
 
     def run_all_tests(self):
         """Run all API tests"""
-        print("🚀 Starting CineScript API Tests")
+        print("🚀 Starting TranscriptorIA API Tests")
         print(f"📍 Base URL: {self.base_url}")
         print("=" * 60)
         
         # Test sequence
         self.test_health_check()
         
+        # Test admin functionality first
+        if self.test_admin_registration() or self.test_admin_login():
+            self.test_admin_endpoints()
+        
+        # Test regular user functionality
         if self.test_user_registration():
             self.test_user_login()
             self.test_get_user_profile()
+            self.test_subscription_endpoints()
             
             if self.test_project_operations():
                 if self.test_video_upload():
@@ -480,7 +486,7 @@ class TranscriptorIAAPITester:
             return 1
 
 def main():
-    tester = CineScriptAPITester()
+    tester = TranscriptorIAAPITester()
     return tester.run_all_tests()
 
 if __name__ == "__main__":
