@@ -110,29 +110,92 @@ class TranscriptorIAAPITester:
             return True
         return False
 
-    def test_user_login(self):
-        """Test user login with registered user"""
-        if not hasattr(self, 'test_user'):
-            self.log_test("User Login", False, "No test user available")
-            return False
-            
-        login_data = {
-            "email": self.test_user["email"],
-            "password": self.test_user["password"]
+    def test_admin_registration(self):
+        """Test admin user registration"""
+        admin_user = {
+            "email": "admin@transcriptoria.com",
+            "password": "AdminPass123!",
+            "name": "Admin User"
         }
         
         response = self.run_test(
-            "User Login",
+            "Admin Registration",
             "POST",
-            "auth/login",
+            "auth/register",
             200,
-            data=login_data
+            data=admin_user
         )
         
         if response and 'token' in response:
-            self.token = response['token']
+            self.admin_token = response['token']
+            self.admin_user = admin_user
             return True
         return False
+
+    def test_admin_login(self):
+        """Test admin login"""
+        if not hasattr(self, 'admin_user'):
+            # Try to login with existing admin
+            admin_user = {
+                "email": "admin@transcriptoria.com",
+                "password": "AdminPass123!"
+            }
+        else:
+            admin_user = {
+                "email": self.admin_user["email"],
+                "password": self.admin_user["password"]
+            }
+            
+        response = self.run_test(
+            "Admin Login",
+            "POST",
+            "auth/login",
+            200,
+            data=admin_user
+        )
+        
+        if response and 'token' in response:
+            self.admin_token = response['token']
+            return True
+        return False
+
+    def test_admin_endpoints(self):
+        """Test admin-specific endpoints"""
+        if not self.admin_token:
+            self.log_test("Admin Endpoints", False, "No admin token available")
+            return False
+        
+        # Store current token and use admin token
+        user_token = self.token
+        self.token = self.admin_token
+        
+        # Test get all users
+        users = self.run_test(
+            "Get All Users (Admin)",
+            "GET",
+            "admin/users",
+            200
+        )
+        
+        # Test subscription endpoints (requires user to test on)
+        if hasattr(self, 'test_user_id'):
+            self.run_test(
+                "Grant Subscription (Admin)",
+                "POST",
+                f"admin/users/{self.test_user_id}/grant-subscription?days=30",
+                200
+            )
+            
+            self.run_test(
+                "Toggle Admin Status",
+                "POST",
+                f"admin/users/{self.test_user_id}/toggle-admin",
+                200
+            )
+        
+        # Restore user token
+        self.token = user_token
+        return bool(users)
 
     def test_get_user_profile(self):
         """Test getting user profile"""
