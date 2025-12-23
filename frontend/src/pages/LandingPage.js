@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Play, Subtitles, Languages, Download, Sparkles, Zap } from 'lucide-react';
+import { Play, Subtitles, Languages, Download, Sparkles, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function LandingPage() {
@@ -15,192 +15,135 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] relative overflow-hidden">
-      {/* Hero Glow Background */}
-      <div className="absolute inset-0 hero-glow pointer-events-none" />
-      
-      {/* Noise Overlay */}
-      <div className="absolute inset-0 noise-overlay pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Decorations */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300/30 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-300/30 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-pink-200/20 rounded-full blur-3xl" />
 
       {/* Navigation */}
       <nav className="relative z-10 flex items-center justify-between px-8 py-6 lg:px-16">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-[#D0FF00] rounded-sm flex items-center justify-center">
-            <Subtitles className="w-6 h-6 text-black" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <Subtitles className="w-5 h-5 text-white" />
           </div>
-          <span className="text-2xl font-bold tracking-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
-            CINESCRIPT
+          <span className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            CineScript
           </span>
         </div>
         
         <button
           data-testid="nav-get-started-btn"
           onClick={handleGetStarted}
-          className="btn-primary"
+          className="btn-primary flex items-center gap-2"
         >
           {user ? 'Dashboard' : 'Get Started'}
+          <ArrowRight className="w-4 h-4" />
         </button>
       </nav>
 
       {/* Hero Section */}
       <section className="relative z-10 px-8 lg:px-16 pt-16 pb-24">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: Content */}
-          <div className="space-y-8 animate-fade-in">
-            <div className="space-y-4">
-              <p className="ui-label text-[#D0FF00]">AI-Powered Video Transcription</p>
-              <h1 className="text-5xl lg:text-7xl font-extrabold leading-tight" style={{ fontFamily: 'Syne, sans-serif' }}>
-                TRANSCRIBE.<br />
-                <span className="text-[#6E44FF]">TRANSLATE.</span><br />
-                SUBTITLE.
-              </h1>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 mb-6">
+              <Sparkles className="w-4 h-4 text-indigo-600" />
+              <span className="text-sm font-medium text-indigo-700">AI-Powered Transcription</span>
             </div>
             
-            <p className="text-lg text-[#A1A1AA] max-w-lg leading-relaxed">
+            <h1 className="text-5xl lg:text-7xl font-extrabold leading-tight mb-6" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+              <span className="text-slate-800">Transcribe & Translate</span>
+              <br />
+              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Your Videos
+              </span>
+            </h1>
+            
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
               Transform your videos with AI-powered transcription and professional subtitles. 
-              Upload, transcribe, translate, and export—all in one seamless workflow.
+              Upload, transcribe, translate, and export seamlessly.
             </p>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               <button
                 data-testid="hero-get-started-btn"
                 onClick={handleGetStarted}
-                className="btn-primary flex items-center gap-2"
+                className="btn-primary text-lg px-8 py-4 flex items-center gap-2"
               >
-                <Zap className="w-5 h-5" />
                 Start Free
+                <ArrowRight className="w-5 h-5" />
               </button>
-              <button className="btn-ghost flex items-center gap-2">
+              <button className="btn-ghost text-lg px-8 py-4 flex items-center gap-2">
                 <Play className="w-5 h-5" />
                 Watch Demo
               </button>
             </div>
-
-            {/* Stats */}
-            <div className="flex gap-12 pt-8 border-t border-[#27272A]">
-              <div>
-                <p className="text-3xl font-bold text-[#D0FF00]">50+</p>
-                <p className="text-sm text-[#A1A1AA]">Languages</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-[#D0FF00]">99%</p>
-                <p className="text-sm text-[#A1A1AA]">Accuracy</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-[#D0FF00]">2x</p>
-                <p className="text-sm text-[#A1A1AA]">Faster</p>
-              </div>
-            </div>
           </div>
 
-          {/* Right: Visual */}
-          <div className="relative animate-slide-in" style={{ animationDelay: '0.2s' }}>
-            <div className="relative aspect-video rounded-sm overflow-hidden border border-[#27272A] bg-[#0A0A0A]">
-              <img
-                src="https://images.unsplash.com/photo-1649456674221-12b66d8a6fa8?crop=entropy&cs=srgb&fm=jpg&q=85&w=800"
-                alt="Professional video editing"
-                className="w-full h-full object-cover opacity-60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent" />
-              
-              {/* Floating UI Elements */}
-              <div className="absolute bottom-4 left-4 right-4 glass rounded-sm p-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-2 h-2 bg-[#D0FF00] rounded-full animate-pulse" />
-                  <span className="text-xs font-mono text-[#A1A1AA]">00:02:34 / 00:05:00</span>
-                </div>
-                <div className="h-1 bg-[#27272A] rounded-full overflow-hidden">
-                  <div className="h-full w-1/2 bg-[#D0FF00]" />
-                </div>
-                <p className="mt-3 text-sm font-mono text-center">
-                  "The future of video content creation is here..."
-                </p>
-              </div>
-            </div>
-            
-            {/* Decorative Elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#6E44FF] opacity-20 blur-3xl" />
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[#D0FF00] opacity-10 blur-3xl" />
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="relative z-10 px-8 lg:px-16 py-24 bg-[#0A0A0A]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="ui-label text-[#6E44FF] mb-4">How It Works</p>
-            <h2 className="text-4xl lg:text-5xl font-bold" style={{ fontFamily: 'Syne, sans-serif' }}>
-              THREE SIMPLE STEPS
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
+          {/* Feature Cards */}
+          <div className="grid md:grid-cols-3 gap-6 mt-20" style={{ animationDelay: '0.2s' }}>
             {/* Step 1 */}
-            <div className="card p-8 group hover:border-[#D0FF00]/50 transition-all duration-300">
-              <div className="w-16 h-16 bg-[#D0FF00]/10 rounded-sm flex items-center justify-center mb-6 group-hover:bg-[#D0FF00]/20 transition-colors">
-                <Sparkles className="w-8 h-8 text-[#D0FF00]" />
+            <div className="glass-card p-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20">
+                <Sparkles className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3">1. Upload & Transcribe</h3>
-              <p className="text-[#A1A1AA]">
-                Upload your video and let our AI-powered engine extract every word with precise timestamps.
+              <h3 className="text-xl font-bold mb-3 text-slate-800">1. Upload & Transcribe</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Upload your video and let our AI extract every word with precise timestamps.
               </p>
             </div>
 
             {/* Step 2 */}
-            <div className="card p-8 group hover:border-[#6E44FF]/50 transition-all duration-300">
-              <div className="w-16 h-16 bg-[#6E44FF]/10 rounded-sm flex items-center justify-center mb-6 group-hover:bg-[#6E44FF]/20 transition-colors">
-                <Languages className="w-8 h-8 text-[#6E44FF]" />
+            <div className="glass-card p-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-purple-500/20">
+                <Languages className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3">2. Translate & Edit</h3>
-              <p className="text-[#A1A1AA]">
-                Translate subtitles to any language. Edit text and timing with our intuitive timeline editor.
+              <h3 className="text-xl font-bold mb-3 text-slate-800">2. Translate & Edit</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Translate subtitles to any language and edit text with our intuitive editor.
               </p>
             </div>
 
             {/* Step 3 */}
-            <div className="card p-8 group hover:border-[#D0FF00]/50 transition-all duration-300">
-              <div className="w-16 h-16 bg-[#D0FF00]/10 rounded-sm flex items-center justify-center mb-6 group-hover:bg-[#D0FF00]/20 transition-colors">
-                <Download className="w-8 h-8 text-[#D0FF00]" />
+            <div className="glass-card p-8 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/20">
+                <Download className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3">3. Export Video</h3>
-              <p className="text-[#A1A1AA]">
-                Customize subtitle styles and export your video with burned-in subtitles ready to share.
+              <h3 className="text-xl font-bold mb-3 text-slate-800">3. Export Video</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Customize styles and export your video with burned-in subtitles.
               </p>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="relative z-10 px-8 lg:px-16 py-24">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6" style={{ fontFamily: 'Syne, sans-serif' }}>
-            READY TO CREATE?
-          </h2>
-          <p className="text-lg text-[#A1A1AA] mb-8">
-            Join thousands of creators using CineScript to reach global audiences.
-          </p>
-          <button
-            data-testid="cta-get-started-btn"
-            onClick={handleGetStarted}
-            className="btn-primary text-lg px-8 py-4"
-          >
-            Start Creating Now
-          </button>
+          {/* Stats */}
+          <div className="flex justify-center gap-16 mt-20">
+            <div className="text-center">
+              <p className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">50+</p>
+              <p className="text-slate-500 mt-1">Languages</p>
+            </div>
+            <div className="text-center">
+              <p className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">99%</p>
+              <p className="text-slate-500 mt-1">Accuracy</p>
+            </div>
+            <div className="text-center">
+              <p className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">2x</p>
+              <p className="text-slate-500 mt-1">Faster</p>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 px-8 lg:px-16 py-8 border-t border-[#27272A]">
-        <div className="flex items-center justify-between">
+      <footer className="relative z-10 px-8 lg:px-16 py-8 border-t border-slate-200/50">
+        <div className="flex items-center justify-between max-w-6xl mx-auto">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#D0FF00] rounded-sm flex items-center justify-center">
-              <Subtitles className="w-4 h-4 text-black" />
+            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <Subtitles className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold">CINESCRIPT</span>
+            <span className="font-semibold text-slate-700">CineScript</span>
           </div>
-          <p className="text-sm text-[#52525B]">
+          <p className="text-sm text-slate-500">
             © 2024 CineScript. All rights reserved.
           </p>
         </div>
