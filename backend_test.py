@@ -7,10 +7,11 @@ from datetime import datetime
 import tempfile
 import os
 
-class CineScriptAPITester:
+class TranscriptorIAAPITester:
     def __init__(self, base_url="https://vidtranslate-20.preview.emergentagent.com/api"):
         self.base_url = base_url
         self.token = None
+        self.admin_token = None
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
