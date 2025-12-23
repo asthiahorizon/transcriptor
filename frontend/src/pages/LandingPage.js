@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Play, Subtitles, Languages, Download, Sparkles, ArrowRight } from 'lucide-react';
+import { Subtitles, Languages, Download, Sparkles, ArrowRight, Shield, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function LandingPage() {
@@ -28,16 +28,16 @@ export default function LandingPage() {
             <Subtitles className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-            CineScript
+            TranscriptorIA
           </span>
         </div>
         
         <button
           data-testid="nav-get-started-btn"
           onClick={handleGetStarted}
-          className="btn-primary flex items-center gap-2"
+          className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow flex items-center gap-2"
         >
-          {user ? 'Dashboard' : 'Get Started'}
+          {user ? 'Dashboard' : 'Commencer'}
           <ArrowRight className="w-4 h-4" />
         </button>
       </nav>
@@ -46,36 +46,41 @@ export default function LandingPage() {
       <section className="relative z-10 px-8 lg:px-16 pt-16 pb-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 mb-6">
-              <Sparkles className="w-4 h-4 text-indigo-600" />
-              <span className="text-sm font-medium text-indigo-700">AI-Powered Transcription</span>
+            {/* Privacy Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 mb-6">
+              <Shield className="w-4 h-4 text-emerald-600" />
+              <span className="text-sm font-medium text-emerald-700">IA Privée - Vos données restent confidentielles</span>
             </div>
             
             <h1 className="text-5xl lg:text-7xl font-extrabold leading-tight mb-6" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              <span className="text-slate-800">Transcribe & Translate</span>
+              <span className="text-slate-800">Transcrivez & Traduisez</span>
               <br />
               <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Your Videos
+                Vos Vidéos
               </span>
             </h1>
             
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Transform your videos with AI-powered transcription and professional subtitles. 
-              Upload, transcribe, translate, and export seamlessly.
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed">
+              Transformez vos vidéos avec une transcription IA et des sous-titres professionnels. 
+              Uploadez, transcrivez, traduisez et exportez en toute simplicité.
             </p>
+
+            {/* Privacy Notice */}
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-white/60 backdrop-blur-sm border border-slate-200 mb-10">
+              <Lock className="w-5 h-5 text-indigo-600" />
+              <p className="text-sm text-slate-600">
+                <span className="font-semibold text-slate-800">100% Privé</span> — Propulsé par Infomaniak AI, aucune donnée n'est envoyée ou analysée à l'extérieur.
+              </p>
+            </div>
 
             <div className="flex flex-wrap justify-center gap-4">
               <button
                 data-testid="hero-get-started-btn"
                 onClick={handleGetStarted}
-                className="btn-primary text-lg px-8 py-4 flex items-center gap-2"
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-lg px-8 py-4 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow flex items-center gap-2"
               >
-                Start Free
+                Commencer gratuitement
                 <ArrowRight className="w-5 h-5" />
-              </button>
-              <button className="btn-ghost text-lg px-8 py-4 flex items-center gap-2">
-                <Play className="w-5 h-5" />
-                Watch Demo
               </button>
             </div>
           </div>
@@ -87,9 +92,9 @@ export default function LandingPage() {
               <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20">
                 <Sparkles className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-800">1. Upload & Transcribe</h3>
+              <h3 className="text-xl font-bold mb-3 text-slate-800">1. Uploadez & Transcrivez</h3>
               <p className="text-slate-600 leading-relaxed">
-                Upload your video and let our AI extract every word with precise timestamps.
+                Uploadez votre vidéo et laissez notre IA extraire chaque mot avec des timestamps précis.
               </p>
             </div>
 
@@ -98,9 +103,9 @@ export default function LandingPage() {
               <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-purple-500/20">
                 <Languages className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-800">2. Translate & Edit</h3>
+              <h3 className="text-xl font-bold mb-3 text-slate-800">2. Traduisez & Éditez</h3>
               <p className="text-slate-600 leading-relaxed">
-                Translate subtitles to any language and edit text with our intuitive editor.
+                Traduisez les sous-titres dans n'importe quelle langue et éditez le texte facilement.
               </p>
             </div>
 
@@ -109,26 +114,10 @@ export default function LandingPage() {
               <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/20">
                 <Download className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-800">3. Export Video</h3>
+              <h3 className="text-xl font-bold mb-3 text-slate-800">3. Exportez la Vidéo</h3>
               <p className="text-slate-600 leading-relaxed">
-                Customize styles and export your video with burned-in subtitles.
+                Personnalisez les styles et exportez votre vidéo avec les sous-titres incrustés.
               </p>
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="flex justify-center gap-16 mt-20">
-            <div className="text-center">
-              <p className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">50+</p>
-              <p className="text-slate-500 mt-1">Languages</p>
-            </div>
-            <div className="text-center">
-              <p className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">99%</p>
-              <p className="text-slate-500 mt-1">Accuracy</p>
-            </div>
-            <div className="text-center">
-              <p className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">2x</p>
-              <p className="text-slate-500 mt-1">Faster</p>
             </div>
           </div>
         </div>
@@ -141,10 +130,10 @@ export default function LandingPage() {
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <Subtitles className="w-4 h-4 text-white" />
             </div>
-            <span className="font-semibold text-slate-700">CineScript</span>
+            <span className="font-semibold text-slate-700">TranscriptorIA</span>
           </div>
           <p className="text-sm text-slate-500">
-            © 2024 CineScript. All rights reserved.
+            © 2024 Asthia Horizon Sàrl. Tous droits réservés.
           </p>
         </div>
       </footer>

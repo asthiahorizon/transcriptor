@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { 
   Plus, LogOut, Subtitles, FolderOpen, Video, Trash2, 
-  Upload, Loader2, Clock
+  Upload, Loader2, Clock, Globe
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -16,6 +16,35 @@ import {
 } from '../components/ui/dialog';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+
+const LANGUAGE_NAMES = {
+  en: 'Anglais',
+  fr: 'Français',
+  es: 'Espagnol',
+  de: 'Allemand',
+  it: 'Italien',
+  pt: 'Portugais',
+  zh: 'Chinois',
+  ja: 'Japonais',
+  ko: 'Coréen',
+  ar: 'Arabe',
+  hi: 'Hindi',
+  ru: 'Russe',
+};
+
+const LanguageBadge = ({ code, type }) => {
+  if (!code) return null;
+  const colors = {
+    source: 'bg-blue-100 text-blue-700 border-blue-200',
+    target: 'bg-purple-100 text-purple-700 border-purple-200'
+  };
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${colors[type]}`}>
+      <Globe className="w-3 h-3" />
+      {LANGUAGE_NAMES[code] || code.toUpperCase()}
+    </span>
+  );
+};
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
@@ -44,7 +73,7 @@ export default function DashboardPage() {
         fetchProjectVideos(project.id);
       }
     } catch (error) {
-      toast.error('Failed to load projects');
+      toast.error('Erreur de chargement des projets');
     } finally {
       setLoading(false);
     }
@@ -64,7 +93,7 @@ export default function DashboardPage() {
 
   const createProject = async () => {
     if (!newProjectName.trim()) {
-      toast.error('Please enter a project name');
+      toast.error('Veuillez entrer un nom de projet');
       return;
     }
 
@@ -77,21 +106,21 @@ export default function DashboardPage() {
       setShowNewProject(false);
       setNewProjectName('');
       setNewProjectDesc('');
-      toast.success('Project created!');
+      toast.success('Projet créé !');
     } catch (error) {
-      toast.error('Failed to create project');
+      toast.error('Erreur lors de la création du projet');
     }
   };
 
   const deleteProject = async (projectId) => {
-    if (!window.confirm('Are you sure you want to delete this project?')) return;
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) return;
     
     try {
       await axios.delete(`${API}/projects/${projectId}`);
       setProjects(projects.filter(p => p.id !== projectId));
-      toast.success('Project deleted');
+      toast.success('Projet supprimé');
     } catch (error) {
-      toast.error('Failed to delete project');
+      toast.error('Erreur lors de la suppression');
     }
   };
 
@@ -116,19 +145,19 @@ export default function DashboardPage() {
       }));
       
       setShowUpload(false);
-      toast.success('Video uploaded! Redirecting to editor...');
+      toast.success('Vidéo uploadée ! Redirection vers l\'éditeur...');
       navigate(`/editor/${response.data.id}`);
     } catch (error) {
-      toast.error('Failed to upload video');
+      toast.error('Erreur lors de l\'upload');
     } finally {
       setUploading(false);
     }
   };
 
   const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
       day: 'numeric',
+      month: 'short',
       year: 'numeric'
     });
   };
@@ -142,16 +171,17 @@ export default function DashboardPage() {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      uploaded: 'status-uploaded',
-      transcribing: 'status-transcribing',
-      transcribed: 'status-transcribed',
-      translating: 'status-translating',
-      translated: 'status-translated',
-      rendering: 'status-rendering',
-      completed: 'status-completed',
-      error: 'status-error'
+      uploaded: { class: 'bg-slate-100 text-slate-600', label: 'Uploadé' },
+      transcribing: { class: 'bg-purple-100 text-purple-600', label: 'Transcription...' },
+      transcribed: { class: 'bg-emerald-100 text-emerald-600', label: 'Transcrit' },
+      translating: { class: 'bg-purple-100 text-purple-600', label: 'Traduction...' },
+      translated: { class: 'bg-emerald-100 text-emerald-600', label: 'Traduit' },
+      rendering: { class: 'bg-purple-100 text-purple-600', label: 'Rendu...' },
+      completed: { class: 'bg-emerald-100 text-emerald-600', label: 'Terminé' },
+      error: { class: 'bg-red-100 text-red-600', label: 'Erreur' }
     };
-    return statusMap[status] || 'status-uploaded';
+    const info = statusMap[status] || statusMap.uploaded;
+    return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${info.class}`}>{info.label}</span>;
   };
 
   return (
@@ -168,13 +198,13 @@ export default function DashboardPage() {
               <Subtitles className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              CineScript
+              TranscriptorIA
             </span>
           </div>
           
           <div className="flex items-center gap-6">
             <span className="text-slate-500">
-              Welcome, <span className="text-slate-700 font-medium">{user?.name}</span>
+              Bonjour, <span className="text-slate-700 font-medium">{user?.name}</span>
             </span>
             <button
               onClick={logout}
@@ -182,7 +212,7 @@ export default function DashboardPage() {
               data-testid="logout-btn"
             >
               <LogOut className="w-5 h-5" />
-              Logout
+              Déconnexion
             </button>
           </div>
         </div>
@@ -194,18 +224,18 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-slate-800 mb-1" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              My Projects
+              Mes Projets
             </h1>
-            <p className="text-slate-500">Manage your video transcription projects</p>
+            <p className="text-slate-500">Gérez vos projets de transcription vidéo</p>
           </div>
           
           <button
             onClick={() => setShowNewProject(true)}
-            className="btn-primary flex items-center gap-2"
+            className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold px-5 py-3 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow flex items-center gap-2"
             data-testid="new-project-btn"
           >
             <Plus className="w-5 h-5" />
-            New Project
+            Nouveau Projet
           </button>
         </div>
 
@@ -217,13 +247,13 @@ export default function DashboardPage() {
         ) : projects.length === 0 ? (
           <div className="text-center py-20 glass-card p-12">
             <FolderOpen className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-slate-700 mb-2">No projects yet</h3>
-            <p className="text-slate-500 mb-6">Create your first project to get started</p>
+            <h3 className="text-xl font-bold text-slate-700 mb-2">Aucun projet</h3>
+            <p className="text-slate-500 mb-6">Créez votre premier projet pour commencer</p>
             <button
               onClick={() => setShowNewProject(true)}
-              className="btn-primary"
+              className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold px-5 py-3 rounded-xl shadow-lg"
             >
-              Create Project
+              Créer un projet
             </button>
           </div>
         ) : (
@@ -252,7 +282,7 @@ export default function DashboardPage() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-lg text-slate-800 truncate">{project.name}</h3>
                     <p className="text-sm text-slate-500 truncate">
-                      {project.description || 'No description'}
+                      {project.description || 'Pas de description'}
                     </p>
                   </div>
                 </div>
@@ -271,9 +301,11 @@ export default function DashboardPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-slate-700 truncate">{video.original_filename}</p>
-                        <span className={`status-badge ${getStatusBadge(video.status)}`}>
-                          {video.status}
-                        </span>
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                          {getStatusBadge(video.status)}
+                          {video.source_language && <LanguageBadge code={video.source_language} type="source" />}
+                          {video.target_language && <LanguageBadge code={video.target_language} type="target" />}
+                        </div>
                       </div>
                       <span className="text-xs text-slate-400 font-mono">
                         {formatDuration(video.duration)}
@@ -283,7 +315,7 @@ export default function DashboardPage() {
                   
                   {(projectVideos[project.id]?.length || 0) === 0 && (
                     <p className="text-sm text-slate-400 text-center py-4">
-                      No videos yet
+                      Aucune vidéo
                     </p>
                   )}
                 </div>
@@ -303,7 +335,7 @@ export default function DashboardPage() {
                     data-testid={`upload-video-${project.id}`}
                   >
                     <Upload className="w-4 h-4" />
-                    Upload Video
+                    Uploader
                   </button>
                 </div>
               </div>
@@ -312,25 +344,30 @@ export default function DashboardPage() {
         )}
       </main>
 
+      {/* Footer */}
+      <footer className="relative z-10 px-8 py-4 text-center">
+        <p className="text-sm text-slate-400">© 2024 Asthia Horizon Sàrl</p>
+      </footer>
+
       {/* New Project Dialog */}
       <Dialog open={showNewProject} onOpenChange={setShowNewProject}>
-        <DialogContent className="glass-card border-0 sm:max-w-md">
+        <DialogContent className="glass-card border-0 sm:max-w-md !transform-none">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              New Project
+              Nouveau Projet
             </DialogTitle>
             <DialogDescription className="text-slate-500">
-              Create a new video transcription project
+              Créez un nouveau projet de transcription vidéo
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
-              <label className="ui-label">Project Name</label>
+              <label className="ui-label">Nom du projet</label>
               <input
                 type="text"
                 className="input w-full"
-                placeholder="My Video Project"
+                placeholder="Mon Projet Vidéo"
                 value={newProjectName}
                 onChange={(e) => setNewProjectName(e.target.value)}
                 data-testid="project-name-input"
@@ -338,10 +375,10 @@ export default function DashboardPage() {
             </div>
             
             <div className="space-y-2">
-              <label className="ui-label">Description (Optional)</label>
+              <label className="ui-label">Description (optionnel)</label>
               <textarea
                 className="input w-full h-24 resize-none"
-                placeholder="Describe your project..."
+                placeholder="Décrivez votre projet..."
                 value={newProjectDesc}
                 onChange={(e) => setNewProjectDesc(e.target.value)}
                 data-testid="project-desc-input"
@@ -353,14 +390,14 @@ export default function DashboardPage() {
                 onClick={() => setShowNewProject(false)}
                 className="btn-ghost flex-1"
               >
-                Cancel
+                Annuler
               </button>
               <button
                 onClick={createProject}
-                className="btn-primary flex-1"
+                className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-lg"
                 data-testid="create-project-btn"
               >
-                Create Project
+                Créer
               </button>
             </div>
           </div>
@@ -369,13 +406,13 @@ export default function DashboardPage() {
 
       {/* Upload Dialog */}
       <Dialog open={showUpload} onOpenChange={setShowUpload}>
-        <DialogContent className="glass-card border-0 sm:max-w-md">
+        <DialogContent className="glass-card border-0 sm:max-w-md !transform-none">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              Upload Video
+              Uploader une vidéo
             </DialogTitle>
             <DialogDescription className="text-slate-500">
-              Upload a video to {selectedProject?.name}
+              Ajouter une vidéo à {selectedProject?.name}
             </DialogDescription>
           </DialogHeader>
           
@@ -388,7 +425,7 @@ export default function DashboardPage() {
                   <Upload className="w-12 h-12 mx-auto mb-4 text-slate-300" />
                 )}
                 <p className="font-medium text-slate-700 mb-1">
-                  {uploading ? 'Uploading...' : 'Click to upload or drag and drop'}
+                  {uploading ? 'Upload en cours...' : 'Cliquez pour uploader'}
                 </p>
                 <p className="text-sm text-slate-400">
                   MP4, MOV, AVI, MKV
