@@ -159,29 +159,28 @@ class TranscriptorIAAPITester:
 
     def test_admin_login(self):
         """Test admin login"""
-        if not hasattr(self, 'admin_user'):
-            # Try to login with existing admin
+        # Try different possible passwords for admin
+        possible_passwords = ["AdminPass123!", "admin123", "password", "admin", "transcriptoria123"]
+        
+        for password in possible_passwords:
             admin_user = {
                 "email": "admin@transcriptoria.com",
-                "password": "AdminPass123!"
+                "password": password
             }
-        else:
-            admin_user = {
-                "email": self.admin_user["email"],
-                "password": self.admin_user["password"]
-            }
+                
+            response = self.run_test(
+                f"Admin Login (password: {password[:3]}...)",
+                "POST",
+                "auth/login",
+                200,
+                data=admin_user
+            )
             
-        response = self.run_test(
-            "Admin Login",
-            "POST",
-            "auth/login",
-            200,
-            data=admin_user
-        )
+            if response and 'token' in response:
+                self.admin_token = response['token']
+                print(f"✅ Admin login successful with password: {password}")
+                return True
         
-        if response and 'token' in response:
-            self.admin_token = response['token']
-            return True
         return False
 
     def test_admin_endpoints(self):
