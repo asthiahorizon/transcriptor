@@ -98,38 +98,27 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.glass-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-}
-
-/* Primary Button */
-.btn-primary {
-    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
-    color: white;
-    font-weight: 600;
+/* Ghost Button */
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.6);
+    color: #475569;
+    font-weight: 500;
     padding: 0.75rem 1.5rem;
     border-radius: 12px;
-    border: none;
+    border: 1px solid rgba(148, 163, 184, 0.3);
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
-.btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(100, 116, 139, 0.4);
 }
 
-.btn-primary:active {
-    transform: translateY(0);
-}
-
-.btn-primary:disabled {
-    opacity: 0.6;
+.btn-ghost:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
@@ -151,26 +140,9 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(-1px);
 }
 
-/* Ghost Button */
-.btn-ghost {
-    background: transparent;
-    color: #64748B;
-    font-weight: 500;
-    padding: 0.75rem 1.5rem;
-    border-radius: 12px;
-    border: 1px solid rgba(148, 163, 184, 0.3);
-    cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s;
-}
-
-.btn-ghost:hover {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(100, 116, 139, 0.4);
-}
-
 /* Input */
 .input {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid rgba(148, 163, 184, 0.3);
     border-radius: 12px;
     color: #1E293B;
@@ -178,7 +150,6 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1rem;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
-    backdrop-filter: blur(10px);
 }
 
 .input:focus {
@@ -188,42 +159,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .input::placeholder {
     color: #94A3B8;
-}
-
-/* Status Badges */
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.status-uploaded {
-    background: rgba(148, 163, 184, 0.2);
-    color: #64748B;
-}
-
-.status-transcribing, .status-translating, .status-rendering {
-    background: rgba(139, 92, 246, 0.15);
-    color: #8B5CF6;
-}
-
-.status-transcribed, .status-translated {
-    background: rgba(16, 185, 129, 0.15);
-    color: #10B981;
-}
-
-.status-completed {
-    background: rgba(16, 185, 129, 0.2);
-    color: #10B981;
-}
-
-.status-error {
-    background: rgba(239, 68, 68, 0.15);
-    color: #EF4444;
 }
 
 /* UI Labels */
@@ -244,13 +179,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .segment-card:hover {
-    border-color: #6366F1;
+    border-color: #818CF8;
     background: rgba(255, 255, 255, 0.9);
 }
 
 .segment-card.active {
     border-color: #6366F1;
     background: rgba(99, 102, 241, 0.08);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 /* Animations */
@@ -284,10 +220,12 @@ h1, h2, h3, h4, h5, h6 {
     animation: slide-up 0.6s ease-out forwards;
 }
 
-/* Override dark theme anywhere */
-.dark {
-    --background: 210 40% 98% !important;
-    --foreground: 222 47% 11% !important;
+/* Dialog/Modal - Fixed positioning, no hover movement */
+[data-radix-dialog-content] {
+    transform: translate(-50%, -50%) !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
 }
 
 /* Toaster Custom Style */
@@ -300,6 +238,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Force light background everywhere */
-#root, .App, [data-testid] {
+#root, .App {
     background: transparent;
+}
+
+/* Textarea auto-resize */
+textarea {
+    min-height: 40px;
 }
