@@ -4,41 +4,49 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --background: #F8FAFC;
-    --background-glass: rgba(255, 255, 255, 0.7);
-    --background-card: rgba(255, 255, 255, 0.6);
-    --primary: #6366F1;
-    --primary-hover: #4F46E5;
-    --primary-light: rgba(99, 102, 241, 0.1);
-    --secondary: #8B5CF6;
-    --text-primary: #1E293B;
-    --text-secondary: #64748B;
-    --text-muted: #94A3B8;
-    --border: rgba(148, 163, 184, 0.3);
-    --border-glass: rgba(255, 255, 255, 0.5);
-    --success: #10B981;
-    --error: #EF4444;
-    --warning: #F59E0B;
-    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
-    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #E0E7FF 0%, #F8FAFC 50%, #FCE7F3 100%);
-    background-attachment: fixed;
-    color: var(--text-primary);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    line-height: 1.6;
-    min-height: 100vh;
+/* Light theme glassmorphism variables */
+@layer base {
+    :root {
+        --background: 210 40% 98%;
+        --foreground: 222 47% 11%;
+        --card: 0 0% 100%;
+        --card-foreground: 222 47% 11%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222 47% 11%;
+        --primary: 239 84% 67%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 263 70% 50%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 210 40% 96%;
+        --muted-foreground: 215 16% 47%;
+        --accent: 210 40% 96%;
+        --accent-foreground: 222 47% 11%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 214 32% 91%;
+        --input: 214 32% 91%;
+        --ring: 239 84% 67%;
+        --radius: 0.75rem;
+    }
+    
+    * {
+        @apply border-border;
+    }
+    
+    html, body {
+        background: linear-gradient(135deg, #E0E7FF 0%, #F8FAFC 50%, #FCE7F3 100%) !important;
+        background-attachment: fixed !important;
+        min-height: 100vh;
+    }
+    
+    body {
+        @apply text-foreground;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        line-height: 1.6;
+        color: #1E293B;
+    }
 }
 
 /* Typography */
@@ -46,7 +54,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: var(--text-primary);
+    color: #1E293B;
 }
 
 /* Custom Scrollbar */
@@ -60,36 +68,36 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border);
+    background: rgba(148, 163, 184, 0.5);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-muted);
+    background: rgba(100, 116, 139, 0.6);
 }
 
 /* Selection */
 ::selection {
-    background: var(--primary);
+    background: #6366F1;
     color: white;
 }
 
-/* Glass Card */
+/* Glass Effect */
 .glass {
-    background: var(--background-glass);
+    background: rgba(255, 255, 255, 0.7) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border-glass);
-    box-shadow: var(--shadow-glass);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
 .glass-card {
-    background: var(--background-card);
+    background: rgba(255, 255, 255, 0.6) !important;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-glass);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 16px;
-    box-shadow: var(--shadow-soft);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -100,7 +108,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Primary Button */
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
     color: white;
     font-weight: 600;
     padding: 0.75rem 1.5rem;
@@ -120,47 +128,52 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(0);
 }
 
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /* Secondary Button */
 .btn-secondary {
-    background: var(--background-glass);
-    color: var(--primary);
+    background: rgba(255, 255, 255, 0.8);
+    color: #6366F1;
     font-weight: 600;
     padding: 0.75rem 1.5rem;
     border-radius: 12px;
-    border: 1px solid var(--primary);
+    border: 1px solid #6366F1;
     cursor: pointer;
     backdrop-filter: blur(10px);
     transition: background-color 0.2s, transform 0.2s;
 }
 
 .btn-secondary:hover {
-    background: var(--primary-light);
+    background: rgba(99, 102, 241, 0.1);
     transform: translateY(-1px);
 }
 
 /* Ghost Button */
 .btn-ghost {
     background: transparent;
-    color: var(--text-secondary);
+    color: #64748B;
     font-weight: 500;
     padding: 0.75rem 1.5rem;
     border-radius: 12px;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(148, 163, 184, 0.3);
     cursor: pointer;
     transition: background-color 0.2s, border-color 0.2s;
 }
 
 .btn-ghost:hover {
     background: rgba(0, 0, 0, 0.03);
-    border-color: var(--text-muted);
+    border-color: rgba(100, 116, 139, 0.4);
 }
 
 /* Input */
 .input {
     background: rgba(255, 255, 255, 0.8);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(148, 163, 184, 0.3);
     border-radius: 12px;
-    color: var(--text-primary);
+    color: #1E293B;
     padding: 0.875rem 1rem;
     font-size: 1rem;
     outline: none;
@@ -169,12 +182,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .input:focus {
-    border-color: var(--primary);
+    border-color: #6366F1;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .input::placeholder {
-    color: var(--text-muted);
+    color: #94A3B8;
 }
 
 /* Status Badges */
@@ -190,27 +203,54 @@ h1, h2, h3, h4, h5, h6 {
 
 .status-uploaded {
     background: rgba(148, 163, 184, 0.2);
-    color: var(--text-secondary);
+    color: #64748B;
 }
 
 .status-transcribing, .status-translating, .status-rendering {
     background: rgba(139, 92, 246, 0.15);
-    color: var(--secondary);
+    color: #8B5CF6;
 }
 
 .status-transcribed, .status-translated {
     background: rgba(16, 185, 129, 0.15);
-    color: var(--success);
+    color: #10B981;
 }
 
 .status-completed {
     background: rgba(16, 185, 129, 0.2);
-    color: var(--success);
+    color: #10B981;
 }
 
 .status-error {
     background: rgba(239, 68, 68, 0.15);
-    color: var(--error);
+    color: #EF4444;
+}
+
+/* UI Labels */
+.ui-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #64748B;
+}
+
+/* Segment Card */
+.segment-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 12px;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.segment-card:hover {
+    border-color: #6366F1;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.segment-card.active {
+    border-color: #6366F1;
+    background: rgba(99, 102, 241, 0.08);
 }
 
 /* Animations */
@@ -236,15 +276,6 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-}
-
 .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;
 }
@@ -253,47 +284,10 @@ h1, h2, h3, h4, h5, h6 {
     animation: slide-up 0.6s ease-out forwards;
 }
 
-/* UI Labels */
-.ui-label {
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-/* Shadcn Override for Light Theme */
-@layer base {
-    :root {
-        --background: 210 40% 98%;
-        --foreground: 222 47% 11%;
-        --card: 0 0% 100%;
-        --card-foreground: 222 47% 11%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 222 47% 11%;
-        --primary: 239 84% 67%;
-        --primary-foreground: 0 0% 100%;
-        --secondary: 263 70% 50%;
-        --secondary-foreground: 0 0% 100%;
-        --muted: 210 40% 96%;
-        --muted-foreground: 215 16% 47%;
-        --accent: 210 40% 96%;
-        --accent-foreground: 222 47% 11%;
-        --destructive: 0 84% 60%;
-        --destructive-foreground: 0 0% 100%;
-        --border: 214 32% 91%;
-        --input: 214 32% 91%;
-        --ring: 239 84% 67%;
-        --radius: 0.75rem;
-    }
-}
-
-@layer base {
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply text-foreground;
-    }
+/* Override dark theme anywhere */
+.dark {
+    --background: 210 40% 98% !important;
+    --foreground: 222 47% 11% !important;
 }
 
 /* Toaster Custom Style */
@@ -301,32 +295,11 @@ h1, h2, h3, h4, h5, h6 {
     background: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(20px) !important;
     border: 1px solid rgba(148, 163, 184, 0.3) !important;
-    color: var(--text-primary) !important;
-    box-shadow: var(--shadow-glass) !important;
+    color: #1E293B !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Video Player Container */
-.video-container {
-    background: rgba(0, 0, 0, 0.03);
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-/* Segment Card */
-.segment-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    transition: border-color 0.2s, background-color 0.2s;
-}
-
-.segment-card:hover {
-    border-color: var(--primary);
-    background: rgba(255, 255, 255, 0.9);
-}
-
-.segment-card.active {
-    border-color: var(--primary);
-    background: rgba(99, 102, 241, 0.08);
+/* Force light background everywhere */
+#root, .App, [data-testid] {
+    background: transparent;
 }
