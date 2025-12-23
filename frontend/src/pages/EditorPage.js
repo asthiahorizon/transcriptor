@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, Play, Pause, Volume2, VolumeX, Loader2, 
-  Sparkles, Languages, Download, Save, Settings
+  Sparkles, Languages, Download, Save, Settings, Globe
 } from 'lucide-react';
 import {
   Select,
@@ -24,24 +24,56 @@ import { Slider } from '../components/ui/slider';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const LANGUAGES = [
-  { code: 'en', name: 'English' },
-  { code: 'fr', name: 'French' },
-  { code: 'es', name: 'Spanish' },
-  { code: 'de', name: 'German' },
-  { code: 'it', name: 'Italian' },
-  { code: 'pt', name: 'Portuguese' },
-  { code: 'zh', name: 'Chinese' },
-  { code: 'ja', name: 'Japanese' },
-  { code: 'ko', name: 'Korean' },
-  { code: 'ar', name: 'Arabic' },
+  { code: 'en', name: 'Anglais' },
+  { code: 'fr', name: 'Français' },
+  { code: 'es', name: 'Espagnol' },
+  { code: 'de', name: 'Allemand' },
+  { code: 'it', name: 'Italien' },
+  { code: 'pt', name: 'Portugais' },
+  { code: 'zh', name: 'Chinois' },
+  { code: 'ja', name: 'Japonais' },
+  { code: 'ko', name: 'Coréen' },
+  { code: 'ar', name: 'Arabe' },
   { code: 'hi', name: 'Hindi' },
-  { code: 'ru', name: 'Russian' },
+  { code: 'ru', name: 'Russe' },
 ];
+
+const LANGUAGE_NAMES = {
+  en: 'Anglais',
+  fr: 'Français',
+  es: 'Espagnol',
+  de: 'Allemand',
+  it: 'Italien',
+  pt: 'Portugais',
+  zh: 'Chinois',
+  ja: 'Japonais',
+  ko: 'Coréen',
+  ar: 'Arabe',
+  hi: 'Hindi',
+  ru: 'Russe',
+};
+
+const LanguageBadge = ({ code, type, label }) => {
+  if (!code) return null;
+  const colors = {
+    source: 'bg-blue-100 text-blue-700 border-blue-200',
+    target: 'bg-purple-100 text-purple-700 border-purple-200'
+  };
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${colors[type]}`}>
+      <Globe className="w-3 h-3" />
+      <span className="text-slate-500">{label}:</span>
+      {LANGUAGE_NAMES[code] || code.toUpperCase()}
+    </span>
+  );
+};
 
 export default function EditorPage() {
   const { videoId } = useParams();
   const navigate = useNavigate();
   const videoRef = useRef(null);
+  const segmentsContainerRef = useRef(null);
+  const segmentRefs = useRef({});
   
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +82,7 @@ export default function EditorPage() {
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [segments, setSegments] = useState([]);
-  const [activeSegment, setActiveSegment] = useState(null);
+  const [activeSegmentIndex, setActiveSegmentIndex] = useState(null);
   const [targetLanguage, setTargetLanguage] = useState('fr');
   const [showSettings, setShowSettings] = useState(false);
   const [subtitleSettings, setSubtitleSettings] = useState({
@@ -78,6 +110,16 @@ export default function EditorPage() {
     }
   }, [video]);
 
+  // Scroll to active segment when it changes
+  useEffect(() => {
+    if (activeSegmentIndex !== null && segmentRefs.current[activeSegmentIndex]) {
+      segmentRefs.current[activeSegmentIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }, [activeSegmentIndex]);
+
   const fetchVideo = async () => {
     try {
       const response = await axios.get(`${API}/videos/${videoId}`);
@@ -85,7 +127,7 @@ export default function EditorPage() {
       if (loading) setLoading(false);
     } catch (error) {
       if (loading) {
-        toast.error('Failed to load video');
+        toast.error('Erreur de chargement de la vidéo');
         navigate('/dashboard');
       }
     }
@@ -94,10 +136,10 @@ export default function EditorPage() {
   const handleTranscribe = async () => {
     try {
       await axios.post(`${API}/videos/${videoId}/transcribe`);
-      toast.success('Transcription started!');
+      toast.success('Transcription démarrée !');
       fetchVideo();
     } catch (error) {
-      toast.error('Failed to start transcription');
+      toast.error('Erreur lors du démarrage de la transcription');
     }
   };
 
@@ -106,20 +148,20 @@ export default function EditorPage() {
       await axios.post(`${API}/videos/${videoId}/translate`, {
         target_language: targetLanguage
       });
-      toast.success('Translation started!');
+      toast.success('Traduction démarrée !');
       fetchVideo();
     } catch (error) {
-      toast.error('Failed to start translation');
+      toast.error('Erreur lors du démarrage de la traduction');
     }
   };
 
   const handleExport = async () => {
     try {
       await axios.post(`${API}/videos/${videoId}/export`);
-      toast.success('Export started! This may take a few minutes.');
+      toast.success('Export démarré ! Cela peut prendre quelques minutes.');
       fetchVideo();
     } catch (error) {
-      toast.error('Failed to start export');
+      toast.error('Erreur lors du démarrage de l\'export');
     }
   };
 
@@ -131,9 +173,9 @@ export default function EditorPage() {
     setSaving(true);
     try {
       await axios.put(`${API}/videos/${videoId}/subtitles`, { segments });
-      toast.success('Subtitles saved!');
+      toast.success('Sous-titres sauvegardés !');
     } catch (error) {
-      toast.error('Failed to save subtitles');
+      toast.error('Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);
     }
@@ -142,10 +184,10 @@ export default function EditorPage() {
   const handleSaveSettings = async () => {
     try {
       await axios.put(`${API}/videos/${videoId}/settings`, subtitleSettings);
-      toast.success('Settings saved!');
+      toast.success('Paramètres sauvegardés !');
       setShowSettings(false);
     } catch (error) {
-      toast.error('Failed to save settings');
+      toast.error('Erreur lors de la sauvegarde des paramètres');
     }
   };
 
@@ -163,21 +205,29 @@ export default function EditorPage() {
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime);
+      const time = videoRef.current.currentTime;
+      setCurrentTime(time);
       
-      const active = segments.find(
-        seg => videoRef.current.currentTime >= seg.start_time && 
-               videoRef.current.currentTime < seg.end_time
+      const activeIndex = segments.findIndex(
+        seg => time >= seg.start_time && time < seg.end_time
       );
-      setActiveSegment(active || null);
+      setActiveSegmentIndex(activeIndex >= 0 ? activeIndex : null);
     }
   };
 
   const handleSeek = (time) => {
-    if (videoRef.current) {
+    if (videoRef.current && !isNaN(time) && time >= 0 && time <= duration) {
       videoRef.current.currentTime = time;
       setCurrentTime(time);
     }
+  };
+
+  const handleProgressClick = (e) => {
+    if (!duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    const newTime = percent * duration;
+    handleSeek(newTime);
   };
 
   const togglePlay = () => {
@@ -200,16 +250,22 @@ export default function EditorPage() {
 
   const getStatusInfo = (status) => {
     const statusInfo = {
-      uploaded: { color: 'text-slate-500', bg: 'bg-slate-100', label: 'Ready to transcribe' },
-      transcribing: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Transcribing...' },
-      transcribed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Transcribed' },
-      translating: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Translating...' },
-      translated: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Translated' },
-      rendering: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Rendering...' },
-      completed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Ready to download' },
-      error: { color: 'text-red-600', bg: 'bg-red-100', label: 'Error' }
+      uploaded: { color: 'text-slate-500', bg: 'bg-slate-100', label: 'Prêt à transcrire' },
+      transcribing: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Transcription...' },
+      transcribed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Transcrit' },
+      translating: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Traduction...' },
+      translated: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Traduit' },
+      rendering: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Rendu...' },
+      completed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Prêt à télécharger' },
+      error: { color: 'text-red-600', bg: 'bg-red-100', label: 'Erreur' }
     };
     return statusInfo[status] || statusInfo.uploaded;
+  };
+
+  // Auto-resize textarea
+  const handleTextareaResize = (e) => {
+    e.target.style.height = 'auto';
+    e.target.style.height = e.target.scrollHeight + 'px';
   };
 
   if (loading) {
@@ -223,6 +279,9 @@ export default function EditorPage() {
   const videoUrl = `${API}/files/uploads/${video?.filename}`;
   const isProcessing = ['transcribing', 'translating', 'rendering'].includes(video?.status);
   const statusInfo = getStatusInfo(video?.status);
+  const activeSegment = activeSegmentIndex !== null ? segments[activeSegmentIndex] : null;
+  const canExport = ['transcribed', 'translated', 'completed'].includes(video?.status) && segments.length > 0;
+  const canDownload = video?.status === 'completed';
 
   return (
     <div className="min-h-screen relative">
@@ -244,9 +303,13 @@ export default function EditorPage() {
             </button>
             <div>
               <h1 className="font-semibold text-slate-800 truncate max-w-md">{video?.original_filename}</h1>
-              <div className={`inline-flex items-center gap-2 px-2 py-0.5 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.color}`}>
-                {isProcessing && <Loader2 className="w-3 h-3 animate-spin" />}
-                {statusInfo.label}
+              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                <span className={`inline-flex items-center gap-2 px-2 py-0.5 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.color}`}>
+                  {isProcessing && <Loader2 className="w-3 h-3 animate-spin" />}
+                  {statusInfo.label}
+                </span>
+                {video?.source_language && <LanguageBadge code={video.source_language} type="source" label="Source" />}
+                {video?.target_language && <LanguageBadge code={video.target_language} type="target" label="Traduction" />}
               </div>
             </div>
           </div>
@@ -258,7 +321,7 @@ export default function EditorPage() {
               data-testid="settings-btn"
             >
               <Settings className="w-4 h-4" />
-              Settings
+              Paramètres
             </button>
             
             <button
@@ -268,19 +331,8 @@ export default function EditorPage() {
               data-testid="save-btn"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              Save
+              Sauvegarder
             </button>
-            
-            {video?.status === 'completed' && (
-              <button
-                onClick={handleDownload}
-                className="btn-primary py-2 px-4 flex items-center gap-2"
-                data-testid="download-btn"
-              >
-                <Download className="w-4 h-4" />
-                Download
-              </button>
-            )}
           </div>
         </div>
       </header>
@@ -291,7 +343,7 @@ export default function EditorPage() {
         <div className="flex-1 space-y-4">
           {/* Video Container */}
           <div className="glass-card overflow-hidden">
-            <div className="relative bg-black aspect-video flex items-center justify-center">
+            <div className="relative bg-slate-900 aspect-video flex items-center justify-center">
               <video
                 ref={videoRef}
                 src={videoUrl}
@@ -326,19 +378,15 @@ export default function EditorPage() {
             </div>
             
             {/* Video Controls */}
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-3 bg-white">
               {/* Progress Bar */}
               <div 
                 className="h-2 bg-slate-200 rounded-full cursor-pointer overflow-hidden"
-                onClick={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const percent = (e.clientX - rect.left) / rect.width;
-                  handleSeek(percent * duration);
-                }}
+                onClick={handleProgressClick}
               >
                 <div 
-                  className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
-                  style={{ width: `${(currentTime / duration) * 100}%` }}
+                  className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-100"
+                  style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
                 />
               </div>
               
@@ -367,19 +415,19 @@ export default function EditorPage() {
           </div>
           
           {/* Action Buttons */}
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
             {video?.status === 'uploaded' && (
               <button
                 onClick={handleTranscribe}
-                className="btn-primary flex items-center gap-2 flex-1 justify-center py-4"
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold flex items-center gap-2 flex-1 justify-center py-4 rounded-xl shadow-lg"
                 data-testid="transcribe-btn"
               >
                 <Sparkles className="w-5 h-5" />
-                Transcribe Video
+                Transcrire la vidéo
               </button>
             )}
             
-            {['transcribed', 'translated'].includes(video?.status) && (
+            {['transcribed', 'translated', 'completed'].includes(video?.status) && (
               <>
                 <Select value={targetLanguage} onValueChange={setTargetLanguage}>
                   <SelectTrigger className="w-40 bg-white border-slate-200">
@@ -400,54 +448,69 @@ export default function EditorPage() {
                   data-testid="translate-btn"
                 >
                   <Languages className="w-5 h-5" />
-                  Translate
+                  Traduire
                 </button>
                 
-                <button
-                  onClick={handleExport}
-                  className="btn-primary flex items-center gap-2 py-3 px-6"
-                  data-testid="export-btn"
-                >
-                  <Download className="w-5 h-5" />
-                  Export Video
-                </button>
+                {canExport && (
+                  <button
+                    onClick={handleExport}
+                    className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold flex items-center gap-2 py-3 px-6 rounded-xl shadow-lg"
+                    data-testid="export-btn"
+                  >
+                    <Download className="w-5 h-5" />
+                    Générer la vidéo
+                  </button>
+                )}
+                
+                {canDownload && (
+                  <button
+                    onClick={handleDownload}
+                    className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold flex items-center gap-2 py-3 px-6 rounded-xl shadow-lg"
+                    data-testid="download-btn"
+                  >
+                    <Download className="w-5 h-5" />
+                    Télécharger
+                  </button>
+                )}
               </>
             )}
             
             {isProcessing && (
               <div className="flex items-center gap-3 text-purple-600 bg-purple-50 px-6 py-3 rounded-xl">
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span className="font-medium">Processing... Please wait</span>
+                <span className="font-medium">Traitement en cours...</span>
               </div>
             )}
           </div>
         </div>
 
         {/* Right: Segments Editor */}
-        <div className="w-[400px] flex flex-col glass-card overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100">
+        <div className="w-[420px] flex flex-col glass-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 bg-white/50">
             <h2 className="font-bold text-lg text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              Subtitles
+              Sous-titres
             </h2>
             <p className="text-sm text-slate-500">
               {segments.length} segments
-              {video?.source_language && ` • ${video.source_language.toUpperCase()}`}
-              {video?.target_language && ` → ${video.target_language.toUpperCase()}`}
             </p>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div 
+            ref={segmentsContainerRef}
+            className="flex-1 overflow-y-auto p-4 space-y-3"
+          >
             {segments.length === 0 ? (
               <div className="text-center py-12 text-slate-400">
                 <Sparkles className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="font-medium">No subtitles yet</p>
-                <p className="text-sm">Transcribe the video to generate subtitles</p>
+                <p className="font-medium">Aucun sous-titre</p>
+                <p className="text-sm">Transcrivez la vidéo pour générer les sous-titres</p>
               </div>
             ) : (
               segments.map((segment, index) => (
                 <div
                   key={segment.id}
-                  className={`segment-card p-4 cursor-pointer ${activeSegment?.id === segment.id ? 'active' : ''}`}
+                  ref={el => segmentRefs.current[index] = el}
+                  className={`segment-card p-4 cursor-pointer ${activeSegmentIndex === index ? 'active' : ''}`}
                   onClick={() => handleSeek(segment.start_time)}
                   data-testid={`segment-${index}`}
                 >
@@ -461,20 +524,24 @@ export default function EditorPage() {
                   {/* Original Text */}
                   <div className="mb-3">
                     <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">Original</label>
-                    <p className="text-sm text-slate-600 mt-1">
+                    <p className="text-sm text-slate-600 mt-1 leading-relaxed">
                       {segment.original_text}
                     </p>
                   </div>
                   
                   {/* Translated Text */}
                   <div>
-                    <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">Translation</label>
+                    <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">Traduction</label>
                     <textarea
                       value={segment.translated_text || ''}
-                      onChange={(e) => updateSegment(index, 'translated_text', e.target.value)}
-                      className="w-full mt-1 p-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 resize-none focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
-                      rows={2}
-                      placeholder="Enter translation..."
+                      onChange={(e) => {
+                        updateSegment(index, 'translated_text', e.target.value);
+                        handleTextareaResize(e);
+                      }}
+                      onFocus={(e) => handleTextareaResize(e)}
+                      className="w-full mt-1 p-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 resize-none focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 overflow-hidden"
+                      rows={1}
+                      placeholder="Entrez la traduction..."
                       onClick={(e) => e.stopPropagation()}
                       data-testid={`translation-input-${index}`}
                     />
@@ -486,19 +553,24 @@ export default function EditorPage() {
         </div>
       </div>
 
+      {/* Footer */}
+      <footer className="relative z-10 px-8 py-4 text-center">
+        <p className="text-sm text-slate-400">© 2024 Asthia Horizon Sàrl</p>
+      </footer>
+
       {/* Settings Dialog */}
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
-        <DialogContent className="glass-card border-0 sm:max-w-md">
+        <DialogContent className="glass-card border-0 sm:max-w-md !transform-none">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              Subtitle Settings
+              Paramètres des sous-titres
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-6 mt-4">
             {/* Font Size */}
             <div className="space-y-2">
-              <label className="ui-label">Font Size: {subtitleSettings.font_size}px</label>
+              <label className="ui-label">Taille de police: {subtitleSettings.font_size}px</label>
               <Slider
                 value={[subtitleSettings.font_size]}
                 onValueChange={([v]) => setSubtitleSettings({ ...subtitleSettings, font_size: v })}
@@ -511,7 +583,7 @@ export default function EditorPage() {
             
             {/* Font Color */}
             <div className="space-y-2">
-              <label className="ui-label">Font Color</label>
+              <label className="ui-label">Couleur du texte</label>
               <div className="flex gap-2">
                 <input
                   type="color"
@@ -530,7 +602,7 @@ export default function EditorPage() {
             
             {/* Background Color */}
             <div className="space-y-2">
-              <label className="ui-label">Background Color</label>
+              <label className="ui-label">Couleur de fond</label>
               <div className="flex gap-2">
                 <input
                   type="color"
@@ -549,7 +621,7 @@ export default function EditorPage() {
             
             {/* Background Opacity */}
             <div className="space-y-2">
-              <label className="ui-label">Background Opacity: {Math.round(subtitleSettings.background_opacity * 100)}%</label>
+              <label className="ui-label">Opacité du fond: {Math.round(subtitleSettings.background_opacity * 100)}%</label>
               <Slider
                 value={[subtitleSettings.background_opacity * 100]}
                 onValueChange={([v]) => setSubtitleSettings({ ...subtitleSettings, background_opacity: v / 100 })}
@@ -571,9 +643,9 @@ export default function EditorPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-slate-200">
-                  <SelectItem value="bottom">Bottom</SelectItem>
-                  <SelectItem value="top">Top</SelectItem>
-                  <SelectItem value="middle">Middle</SelectItem>
+                  <SelectItem value="bottom">Bas</SelectItem>
+                  <SelectItem value="top">Haut</SelectItem>
+                  <SelectItem value="middle">Milieu</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -588,16 +660,16 @@ export default function EditorPage() {
                   backgroundColor: `${subtitleSettings.background_color}${Math.round(subtitleSettings.background_opacity * 255).toString(16).padStart(2, '0')}`,
                 }}
               >
-                Preview subtitle text
+                Aperçu du sous-titre
               </span>
             </div>
             
             <button
               onClick={handleSaveSettings}
-              className="btn-primary w-full"
+              className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-lg"
               data-testid="save-settings-btn"
             >
-              Save Settings
+              Sauvegarder
             </button>
           </div>
         </DialogContent>
