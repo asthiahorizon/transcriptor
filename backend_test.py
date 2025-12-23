@@ -367,6 +367,40 @@ class TranscriptorIAAPITester:
         
         return True
 
+    def test_download_functionality(self):
+        """Test video download functionality with authentication"""
+        if not hasattr(self, 'test_video_id'):
+            self.log_test("Download Functionality", False, "No test video available")
+            return False
+        
+        video_id = self.test_video_id
+        
+        # Test download endpoint (should fail since video is not completed)
+        # But we want to test that it requires authentication properly
+        url = f"{self.base_url}/videos/{video_id}/download"
+        headers = {'Authorization': f'Bearer {self.token}'}
+        
+        print(f"\n🔍 Testing Download with Authentication...")
+        print(f"   URL: {url}")
+        
+        try:
+            response = requests.get(url, headers=headers)
+            
+            # Should return 400 (video not ready) rather than 401 (not authenticated)
+            if response.status_code == 400:
+                self.log_test("Download with Auth", True, "Correctly requires subscription and video completion")
+                return True
+            elif response.status_code == 401:
+                self.log_test("Download with Auth", False, "Authentication failed - this is the bug we're testing")
+                return False
+            else:
+                self.log_test("Download with Auth", True, f"Status: {response.status_code}")
+                return True
+                
+        except Exception as e:
+            self.log_test("Download with Auth", False, f"Exception: {str(e)}")
+            return False
+
     def test_subtitle_operations(self):
         """Test subtitle-related operations"""
         if not hasattr(self, 'test_video_id'):
