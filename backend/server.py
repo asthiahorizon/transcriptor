@@ -409,15 +409,26 @@ async def process_transcription(video_id: str, file_path: str):
                 timestamp_granularities=["segment"]
             )
         
-        # Process segments
+        # Process segments - handle both object and dict formats
         segments = []
-        if hasattr(response, 'segments') and response.segments:
-            for seg in response.segments:
+        response_segments = getattr(response, 'segments', None)
+        if response_segments:
+            for seg in response_segments:
+                # Handle both dict and object formats
+                if isinstance(seg, dict):
+                    start = seg.get('start', 0)
+                    end = seg.get('end', 0)
+                    text = seg.get('text', '').strip()
+                else:
+                    start = getattr(seg, 'start', 0)
+                    end = getattr(seg, 'end', 0)
+                    text = getattr(seg, 'text', '').strip()
+                
                 segments.append({
                     "id": str(uuid.uuid4()),
-                    "start_time": seg.start,
-                    "end_time": seg.end,
-                    "original_text": seg.text.strip(),
+                    "start_time": start,
+                    "end_time": end,
+                    "original_text": text,
                     "translated_text": ""
                 })
         
