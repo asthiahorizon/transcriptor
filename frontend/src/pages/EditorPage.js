@@ -20,6 +20,7 @@ import {
   DialogTitle,
 } from '../components/ui/dialog';
 import { Slider } from '../components/ui/slider';
+import { Progress } from '../components/ui/progress';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -39,18 +40,9 @@ const LANGUAGES = [
 ];
 
 const LANGUAGE_NAMES = {
-  en: 'Anglais',
-  fr: 'Français',
-  es: 'Espagnol',
-  de: 'Allemand',
-  it: 'Italien',
-  pt: 'Portugais',
-  zh: 'Chinois',
-  ja: 'Japonais',
-  ko: 'Coréen',
-  ar: 'Arabe',
-  hi: 'Hindi',
-  ru: 'Russe',
+  en: 'Anglais', fr: 'Français', es: 'Espagnol', de: 'Allemand',
+  it: 'Italien', pt: 'Portugais', zh: 'Chinois', ja: 'Japonais',
+  ko: 'Coréen', ar: 'Arabe', hi: 'Hindi', ru: 'Russe',
 };
 
 const LanguageBadge = ({ code, type, label }) => {
@@ -72,7 +64,6 @@ export default function EditorPage() {
   const { videoId } = useParams();
   const navigate = useNavigate();
   const videoRef = useRef(null);
-  const segmentsContainerRef = useRef(null);
   const segmentRefs = useRef({});
   
   const [video, setVideo] = useState(null);
@@ -97,7 +88,7 @@ export default function EditorPage() {
 
   useEffect(() => {
     fetchVideo();
-    const interval = setInterval(fetchVideo, 5000);
+    const interval = setInterval(fetchVideo, 2000);
     return () => clearInterval(interval);
   }, [videoId]);
 
@@ -110,7 +101,6 @@ export default function EditorPage() {
     }
   }, [video]);
 
-  // Scroll to active segment when it changes
   useEffect(() => {
     if (activeSegmentIndex !== null && segmentRefs.current[activeSegmentIndex]) {
       segmentRefs.current[activeSegmentIndex].scrollIntoView({
@@ -158,7 +148,7 @@ export default function EditorPage() {
   const handleExport = async () => {
     try {
       await axios.post(`${API}/videos/${videoId}/export`);
-      toast.success('Export démarré ! Cela peut prendre quelques minutes.');
+      toast.success('Génération démarrée !');
       fetchVideo();
     } catch (error) {
       toast.error('Erreur lors du démarrage de l\'export');
@@ -255,14 +245,13 @@ export default function EditorPage() {
       transcribed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Transcrit' },
       translating: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Traduction...' },
       translated: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Traduit' },
-      rendering: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Rendu...' },
-      completed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Prêt à télécharger' },
+      rendering: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Génération...' },
+      completed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Prêt' },
       error: { color: 'text-red-600', bg: 'bg-red-100', label: 'Erreur' }
     };
     return statusInfo[status] || statusInfo.uploaded;
   };
 
-  // Auto-resize textarea
   const handleTextareaResize = (e) => {
     e.target.style.height = 'auto';
     e.target.style.height = e.target.scrollHeight + 'px';
@@ -282,6 +271,7 @@ export default function EditorPage() {
   const activeSegment = activeSegmentIndex !== null ? segments[activeSegmentIndex] : null;
   const canExport = ['transcribed', 'translated', 'completed'].includes(video?.status) && segments.length > 0;
   const canDownload = video?.status === 'completed';
+  const progress = video?.progress || 0;
 
   return (
     <div className="min-h-screen relative">
@@ -297,7 +287,6 @@ export default function EditorPage() {
             <button
               onClick={() => navigate('/dashboard')}
               className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
-              data-testid="back-to-dashboard"
             >
               <ArrowLeft className="w-5 h-5 text-slate-600" />
             </button>
@@ -318,7 +307,6 @@ export default function EditorPage() {
             <button
               onClick={() => setShowSettings(true)}
               className="btn-ghost py-2 px-4 flex items-center gap-2"
-              data-testid="settings-btn"
             >
               <Settings className="w-4 h-4" />
               Paramètres
@@ -328,7 +316,6 @@ export default function EditorPage() {
               onClick={handleSaveSubtitles}
               disabled={saving || segments.length === 0}
               className="btn-ghost py-2 px-4 flex items-center gap-2"
-              data-testid="save-btn"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Sauvegarder
@@ -336,6 +323,28 @@ export default function EditorPage() {
           </div>
         </div>
       </header>
+
+      {/* Progress Bar for Processing */}
+      {isProcessing && progress > 0 && (
+        <div className="glass px-6 py-3 border-b border-white/20">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-4">
+              <Loader2 className="w-5 h-5 animate-spin text-purple-600" />
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-medium text-slate-700">
+                    {video?.status === 'transcribing' && 'Transcription en cours...'}
+                    {video?.status === 'translating' && 'Traduction en cours...'}
+                    {video?.status === 'rendering' && 'Génération de la vidéo...'}
+                  </span>
+                  <span className="text-sm text-slate-500">{progress}%</span>
+                </div>
+                <Progress value={progress} className="h-2" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="flex gap-6 p-6 max-w-7xl mx-auto">
@@ -351,7 +360,6 @@ export default function EditorPage() {
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={(e) => setDuration(e.target.duration)}
                 onEnded={() => setIsPlaying(false)}
-                data-testid="video-player"
               />
               
               {/* Subtitle Overlay */}
@@ -395,7 +403,6 @@ export default function EditorPage() {
                 <button
                   onClick={togglePlay}
                   className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow"
-                  data-testid="play-pause-btn"
                 >
                   {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
                 </button>
@@ -420,7 +427,6 @@ export default function EditorPage() {
               <button
                 onClick={handleTranscribe}
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold flex items-center gap-2 flex-1 justify-center py-4 rounded-xl shadow-lg"
-                data-testid="transcribe-btn"
               >
                 <Sparkles className="w-5 h-5" />
                 Transcrire la vidéo
@@ -444,8 +450,8 @@ export default function EditorPage() {
                 
                 <button
                   onClick={handleTranslate}
-                  className="btn-secondary flex items-center gap-2 py-3 px-6"
-                  data-testid="translate-btn"
+                  disabled={isProcessing}
+                  className="btn-secondary flex items-center gap-2 py-3 px-6 disabled:opacity-50"
                 >
                   <Languages className="w-5 h-5" />
                   Traduire
@@ -454,8 +460,8 @@ export default function EditorPage() {
                 {canExport && (
                   <button
                     onClick={handleExport}
-                    className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold flex items-center gap-2 py-3 px-6 rounded-xl shadow-lg"
-                    data-testid="export-btn"
+                    disabled={isProcessing}
+                    className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold flex items-center gap-2 py-3 px-6 rounded-xl shadow-lg disabled:opacity-50"
                   >
                     <Download className="w-5 h-5" />
                     Générer la vidéo
@@ -466,7 +472,6 @@ export default function EditorPage() {
                   <button
                     onClick={handleDownload}
                     className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold flex items-center gap-2 py-3 px-6 rounded-xl shadow-lg"
-                    data-testid="download-btn"
                   >
                     <Download className="w-5 h-5" />
                     Télécharger
@@ -474,20 +479,13 @@ export default function EditorPage() {
                 )}
               </>
             )}
-            
-            {isProcessing && (
-              <div className="flex items-center gap-3 text-purple-600 bg-purple-50 px-6 py-3 rounded-xl">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span className="font-medium">Traitement en cours...</span>
-              </div>
-            )}
           </div>
         </div>
 
         {/* Right: Segments Editor */}
         <div className="w-[420px] flex flex-col glass-card overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 bg-white/50">
-            <h2 className="font-bold text-lg text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            <h2 className="font-bold text-lg text-slate-800">
               Sous-titres
             </h2>
             <p className="text-sm text-slate-500">
@@ -495,10 +493,7 @@ export default function EditorPage() {
             </p>
           </div>
           
-          <div 
-            ref={segmentsContainerRef}
-            className="flex-1 overflow-y-auto p-4 space-y-3"
-          >
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {segments.length === 0 ? (
               <div className="text-center py-12 text-slate-400">
                 <Sparkles className="w-12 h-12 mx-auto mb-4 text-slate-300" />
@@ -512,7 +507,6 @@ export default function EditorPage() {
                   ref={el => segmentRefs.current[index] = el}
                   className={`segment-card p-4 cursor-pointer ${activeSegmentIndex === index ? 'active' : ''}`}
                   onClick={() => handleSeek(segment.start_time)}
-                  data-testid={`segment-${index}`}
                 >
                   {/* Timecode */}
                   <div className="flex items-center gap-2 mb-3">
@@ -543,7 +537,6 @@ export default function EditorPage() {
                       rows={1}
                       placeholder="Entrez la traduction..."
                       onClick={(e) => e.stopPropagation()}
-                      data-testid={`translation-input-${index}`}
                     />
                   </div>
                 </div>
@@ -560,9 +553,9 @@ export default function EditorPage() {
 
       {/* Settings Dialog */}
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
-        <DialogContent className="glass-card border-0 sm:max-w-md !transform-none">
+        <DialogContent className="bg-white border border-slate-200 shadow-xl rounded-2xl sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            <DialogTitle className="text-xl font-bold text-slate-800">
               Paramètres des sous-titres
             </DialogTitle>
           </DialogHeader>
@@ -667,7 +660,6 @@ export default function EditorPage() {
             <button
               onClick={handleSaveSettings}
               className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-lg"
-              data-testid="save-settings-btn"
             >
               Sauvegarder
             </button>
