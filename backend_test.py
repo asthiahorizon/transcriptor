@@ -159,8 +159,8 @@ class TranscriptorIAAPITester:
 
     def test_admin_login(self):
         """Test admin login"""
-        # Try different possible passwords for admin
-        possible_passwords = ["AdminPass123!", "admin123", "password", "admin", "transcriptoria123"]
+        # Try the specific admin credentials from the review request
+        possible_passwords = ["admin123456", "AdminPass123!", "admin123", "password", "admin", "transcriptoria123"]
         
         for password in possible_passwords:
             admin_user = {
