@@ -3,12 +3,15 @@ import { Toaster } from "sonner";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/AuthPage";
+import PricingPage from "./pages/PricingPage";
+import SubscriptionSuccessPage from "./pages/SubscriptionSuccessPage";
 import DashboardPage from "./pages/DashboardPage";
 import EditorPage from "./pages/EditorPage";
+import AdminPage from "./pages/AdminPage";
 import "./App.css";
 
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+const ProtectedRoute = ({ children, requireSubscription = true }) => {
+  const { user, loading, isSubscribed } = useAuth();
   
   if (loading) {
     return (
@@ -20,6 +23,28 @@ const ProtectedRoute = ({ children }) => {
   
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+  
+  if (requireSubscription && !isSubscribed()) {
+    return <Navigate to="/pricing" replace />;
+  }
+  
+  return children;
+};
+
+const AdminRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+  
+  if (!user || !user.is_admin) {
+    return <Navigate to="/dashboard" replace />;
   }
   
   return children;
@@ -55,6 +80,12 @@ function App() {
                 <AuthPage />
               </PublicRoute>
             } />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/subscription/success" element={
+              <ProtectedRoute requireSubscription={false}>
+                <SubscriptionSuccessPage />
+              </ProtectedRoute>
+            } />
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <DashboardPage />
@@ -64,6 +95,11 @@ function App() {
               <ProtectedRoute>
                 <EditorPage />
               </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <AdminRoute>
+                <AdminPage />
+              </AdminRoute>
             } />
           </Routes>
           <Toaster 

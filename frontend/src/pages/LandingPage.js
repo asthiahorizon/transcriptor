@@ -10,7 +10,7 @@ export default function LandingPage() {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/auth');
+      navigate('/pricing');
     }
   };
 
@@ -32,14 +32,33 @@ export default function LandingPage() {
           </span>
         </div>
         
-        <button
-          data-testid="nav-get-started-btn"
-          onClick={handleGetStarted}
-          className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow flex items-center gap-2"
-        >
-          {user ? 'Dashboard' : 'Commencer'}
-          <ArrowRight className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-4">
+          {user ? (
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow flex items-center gap-2"
+            >
+              Dashboard
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate('/auth')}
+                className="text-slate-600 font-medium hover:text-slate-800 transition-colors"
+              >
+                Se connecter
+              </button>
+              <button
+                onClick={() => navigate('/pricing')}
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow flex items-center gap-2"
+              >
+                S'abonner
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </>
+          )}
+        </div>
       </nav>
 
       {/* Hero Section */}
@@ -79,15 +98,14 @@ export default function LandingPage() {
                 onClick={handleGetStarted}
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-lg px-8 py-4 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow flex items-center gap-2"
               >
-                Commencer gratuitement
+                Voir les tarifs
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>
           </div>
 
           {/* Feature Cards */}
-          <div className="grid md:grid-cols-3 gap-6 mt-20" style={{ animationDelay: '0.2s' }}>
-            {/* Step 1 */}
+          <div className="grid md:grid-cols-3 gap-6 mt-20">
             <div className="glass-card p-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
               <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20">
                 <Sparkles className="w-7 h-7 text-white" />
@@ -98,7 +116,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Step 2 */}
             <div className="glass-card p-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
               <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-purple-500/20">
                 <Languages className="w-7 h-7 text-white" />
@@ -109,7 +126,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Step 3 */}
             <div className="glass-card p-8 animate-slide-up" style={{ animationDelay: '0.3s' }}>
               <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/20">
                 <Download className="w-7 h-7 text-white" />

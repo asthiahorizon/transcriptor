@@ -58,8 +58,19 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const refreshUser = async () => {
+    if (token) {
+      await fetchUser();
+    }
+  };
+
+  const isSubscribed = () => {
+    if (!user) return false;
+    return user.is_admin || user.is_subscribed;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout, refreshUser, isSubscribed }}>
       {children}
     </AuthContext.Provider>
   );
