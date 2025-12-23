@@ -648,7 +648,11 @@ export default function EditorPage() {
                         updateSegment(index, 'translated_text', e.target.value);
                         handleTextareaResize(e);
                       }}
-                      onFocus={(e) => handleTextareaResize(e)}
+                      onFocus={(e) => {
+                        setIsEditing(true);
+                        handleTextareaResize(e);
+                      }}
+                      onBlur={() => setIsEditing(false)}
                       className="w-full mt-1 p-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 resize-none focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 overflow-hidden"
                       rows={1}
                       placeholder="Entrez la traduction..."
