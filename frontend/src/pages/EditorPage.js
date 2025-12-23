@@ -290,6 +290,7 @@ export default function EditorPage() {
     const updated = [...segments];
     updated[index] = { ...updated[index], [field]: value };
     setSegments(updated);
+    setHasLocalChanges(true);
   };
 
   const formatTime = (seconds) => {
