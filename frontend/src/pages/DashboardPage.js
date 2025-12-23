@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { 
   Plus, LogOut, Subtitles, FolderOpen, Video, Trash2, 
-  Upload, Loader2, Clock, Globe
+  Upload, Loader2, Clock, Globe, Edit, Shield
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -18,18 +18,9 @@ import {
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const LANGUAGE_NAMES = {
-  en: 'Anglais',
-  fr: 'Français',
-  es: 'Espagnol',
-  de: 'Allemand',
-  it: 'Italien',
-  pt: 'Portugais',
-  zh: 'Chinois',
-  ja: 'Japonais',
-  ko: 'Coréen',
-  ar: 'Arabe',
-  hi: 'Hindi',
-  ru: 'Russe',
+  en: 'Anglais', fr: 'Français', es: 'Espagnol', de: 'Allemand',
+  it: 'Italien', pt: 'Portugais', zh: 'Chinois', ja: 'Japonais',
+  ko: 'Coréen', ar: 'Arabe', hi: 'Hindi', ru: 'Russe',
 };
 
 const LanguageBadge = ({ code, type }) => {
@@ -53,10 +44,14 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNewProject, setShowNewProject] = useState(false);
+  const [showEditProject, setShowEditProject] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [editingProject, setEditingProject] = useState(null);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectDesc, setNewProjectDesc] = useState('');
+  const [editProjectName, setEditProjectName] = useState('');
+  const [editProjectDesc, setEditProjectDesc] = useState('');
   const [uploading, setUploading] = useState(false);
   const [projectVideos, setProjectVideos] = useState({});
 
@@ -110,6 +105,33 @@ export default function DashboardPage() {
     } catch (error) {
       toast.error('Erreur lors de la création du projet');
     }
+  };
+
+  const updateProject = async () => {
+    if (!editProjectName.trim()) {
+      toast.error('Veuillez entrer un nom de projet');
+      return;
+    }
+
+    try {
+      const response = await axios.put(`${API}/projects/${editingProject.id}`, {
+        name: editProjectName,
+        description: editProjectDesc
+      });
+      setProjects(projects.map(p => p.id === editingProject.id ? response.data : p));
+      setShowEditProject(false);
+      setEditingProject(null);
+      toast.success('Projet mis à jour !');
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
+  const openEditProject = (project) => {
+    setEditingProject(project);
+    setEditProjectName(project.name);
+    setEditProjectDesc(project.description || '');
+    setShowEditProject(true);
   };
 
   const deleteProject = async (projectId) => {
@@ -186,7 +208,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen relative">
-      {/* Background Decorations */}
+      {/* Background */}
       <div className="fixed top-0 left-0 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl pointer-events-none" />
       <div className="fixed bottom-0 right-0 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl pointer-events-none" />
 
@@ -203,6 +225,15 @@ export default function DashboardPage() {
           </div>
           
           <div className="flex items-center gap-6">
+            {user?.is_admin && (
+              <button
+                onClick={() => navigate('/admin')}
+                className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors"
+              >
+                <Shield className="w-5 h-5" />
+                Admin
+              </button>
+            )}
             <span className="text-slate-500">
               Bonjour, <span className="text-slate-700 font-medium">{user?.name}</span>
             </span>
@@ -265,14 +296,23 @@ export default function DashboardPage() {
                 style={{ animationDelay: `${index * 0.1}s` }}
                 data-testid={`project-card-${project.id}`}
               >
-                {/* Delete Button */}
-                <button
-                  onClick={() => deleteProject(project.id)}
-                  className="absolute top-4 right-4 p-2 rounded-lg bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100"
-                  data-testid={`delete-project-${project.id}`}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                {/* Action Buttons */}
+                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => openEditProject(project)}
+                    className="p-2 rounded-lg bg-indigo-50 text-indigo-500 hover:bg-indigo-100 transition-colors"
+                    data-testid={`edit-project-${project.id}`}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => deleteProject(project.id)}
+                    className="p-2 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                    data-testid={`delete-project-${project.id}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
 
                 {/* Project Info */}
                 <div className="flex items-start gap-4 mb-4">
@@ -351,9 +391,9 @@ export default function DashboardPage() {
 
       {/* New Project Dialog */}
       <Dialog open={showNewProject} onOpenChange={setShowNewProject}>
-        <DialogContent className="glass-card border-0 sm:max-w-md !transform-none">
+        <DialogContent className="bg-white border border-slate-200 shadow-xl rounded-2xl sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            <DialogTitle className="text-xl font-bold text-slate-800">
               Nouveau Projet
             </DialogTitle>
             <DialogDescription className="text-slate-500">
@@ -370,7 +410,6 @@ export default function DashboardPage() {
                 placeholder="Mon Projet Vidéo"
                 value={newProjectName}
                 onChange={(e) => setNewProjectName(e.target.value)}
-                data-testid="project-name-input"
               />
             </div>
             
@@ -381,7 +420,6 @@ export default function DashboardPage() {
                 placeholder="Décrivez votre projet..."
                 value={newProjectDesc}
                 onChange={(e) => setNewProjectDesc(e.target.value)}
-                data-testid="project-desc-input"
               />
             </div>
             
@@ -395,7 +433,6 @@ export default function DashboardPage() {
               <button
                 onClick={createProject}
                 className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-lg"
-                data-testid="create-project-btn"
               >
                 Créer
               </button>
@@ -404,11 +441,63 @@ export default function DashboardPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Edit Project Dialog */}
+      <Dialog open={showEditProject} onOpenChange={setShowEditProject}>
+        <DialogContent className="bg-white border border-slate-200 shadow-xl rounded-2xl sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-slate-800">
+              Modifier le Projet
+            </DialogTitle>
+            <DialogDescription className="text-slate-500">
+              Modifiez les informations du projet
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <label className="ui-label">Nom du projet</label>
+              <input
+                type="text"
+                className="input w-full"
+                placeholder="Mon Projet Vidéo"
+                value={editProjectName}
+                onChange={(e) => setEditProjectName(e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="ui-label">Description (optionnel)</label>
+              <textarea
+                className="input w-full h-24 resize-none"
+                placeholder="Décrivez votre projet..."
+                value={editProjectDesc}
+                onChange={(e) => setEditProjectDesc(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <button
+                onClick={() => setShowEditProject(false)}
+                className="btn-ghost flex-1"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={updateProject}
+                className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-lg"
+              >
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Upload Dialog */}
       <Dialog open={showUpload} onOpenChange={setShowUpload}>
-        <DialogContent className="glass-card border-0 sm:max-w-md !transform-none">
+        <DialogContent className="bg-white border border-slate-200 shadow-xl rounded-2xl sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+            <DialogTitle className="text-xl font-bold text-slate-800">
               Uploader une vidéo
             </DialogTitle>
             <DialogDescription className="text-slate-500">
@@ -437,7 +526,6 @@ export default function DashboardPage() {
                 accept="video/*"
                 onChange={handleFileUpload}
                 disabled={uploading}
-                data-testid="video-file-input"
               />
             </label>
           </div>
