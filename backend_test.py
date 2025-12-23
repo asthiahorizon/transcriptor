@@ -511,6 +511,7 @@ class TranscriptorIAAPITester:
             if self.test_project_operations():
                 if self.test_video_upload():
                     self.test_video_operations()
+                    self.test_download_functionality()
                     self.test_subtitle_operations()
         
         # Cleanup
