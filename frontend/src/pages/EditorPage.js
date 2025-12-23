@@ -303,9 +303,15 @@ export default function EditorPage() {
   };
 
   const handleSeek = (time) => {
-    if (videoRef.current && !isNaN(time) && time >= 0 && time <= duration) {
+    if (videoRef.current && !isNaN(time) && time >= 0) {
+      // Don't check duration limit as it might not be available yet
       videoRef.current.currentTime = time;
       setCurrentTime(time);
+      
+      // Ensure video is paused at the new position to show the frame
+      if (!isPlaying) {
+        videoRef.current.pause();
+      }
     }
   };
 
