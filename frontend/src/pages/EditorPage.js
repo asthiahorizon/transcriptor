@@ -25,25 +25,99 @@ import { Progress } from '../components/ui/progress';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const LANGUAGES = [
-  { code: 'en', name: 'Anglais' },
+  // Europe
   { code: 'fr', name: 'Français' },
-  { code: 'es', name: 'Espagnol' },
+  { code: 'en', name: 'Anglais' },
   { code: 'de', name: 'Allemand' },
+  { code: 'es', name: 'Espagnol' },
   { code: 'it', name: 'Italien' },
   { code: 'pt', name: 'Portugais' },
-  { code: 'zh', name: 'Chinois' },
+  { code: 'nl', name: 'Néerlandais' },
+  { code: 'pl', name: 'Polonais' },
+  { code: 'ro', name: 'Roumain' },
+  { code: 'hu', name: 'Hongrois' },
+  { code: 'cs', name: 'Tchèque' },
+  { code: 'sk', name: 'Slovaque' },
+  { code: 'bg', name: 'Bulgare' },
+  { code: 'hr', name: 'Croate' },
+  { code: 'sl', name: 'Slovène' },
+  { code: 'sr', name: 'Serbe' },
+  { code: 'uk', name: 'Ukrainien' },
+  { code: 'ru', name: 'Russe' },
+  { code: 'el', name: 'Grec' },
+  { code: 'da', name: 'Danois' },
+  { code: 'sv', name: 'Suédois' },
+  { code: 'no', name: 'Norvégien' },
+  { code: 'fi', name: 'Finnois' },
+  { code: 'et', name: 'Estonien' },
+  { code: 'lv', name: 'Letton' },
+  { code: 'lt', name: 'Lituanien' },
+  { code: 'is', name: 'Islandais' },
+  { code: 'ga', name: 'Irlandais' },
+  { code: 'cy', name: 'Gallois' },
+  { code: 'mt', name: 'Maltais' },
+  { code: 'sq', name: 'Albanais' },
+  { code: 'mk', name: 'Macédonien' },
+  { code: 'bs', name: 'Bosnien' },
+  // Asie
+  { code: 'zh', name: 'Chinois (Simplifié)' },
+  { code: 'zh-TW', name: 'Chinois (Traditionnel)' },
   { code: 'ja', name: 'Japonais' },
   { code: 'ko', name: 'Coréen' },
-  { code: 'ar', name: 'Arabe' },
+  { code: 'vi', name: 'Vietnamien' },
+  { code: 'th', name: 'Thaï' },
+  { code: 'id', name: 'Indonésien' },
+  { code: 'ms', name: 'Malais' },
+  { code: 'tl', name: 'Tagalog (Philippines)' },
+  { code: 'my', name: 'Birman' },
+  { code: 'km', name: 'Khmer' },
+  { code: 'lo', name: 'Lao' },
   { code: 'hi', name: 'Hindi' },
-  { code: 'ru', name: 'Russe' },
+  { code: 'bn', name: 'Bengali' },
+  { code: 'ta', name: 'Tamoul' },
+  { code: 'te', name: 'Télougou' },
+  { code: 'mr', name: 'Marathi' },
+  { code: 'gu', name: 'Gujarati' },
+  { code: 'kn', name: 'Kannada' },
+  { code: 'ml', name: 'Malayalam' },
+  { code: 'pa', name: 'Pendjabi' },
+  { code: 'ur', name: 'Ourdou' },
+  { code: 'ne', name: 'Népalais' },
+  { code: 'si', name: 'Cinghalais' },
+  // Moyen-Orient & Afrique du Nord
+  { code: 'ar', name: 'Arabe' },
+  { code: 'he', name: 'Hébreu' },
+  { code: 'fa', name: 'Persan' },
+  { code: 'tr', name: 'Turc' },
+  { code: 'ku', name: 'Kurde' },
+  // Afrique
+  { code: 'sw', name: 'Swahili' },
+  { code: 'am', name: 'Amharique' },
+  { code: 'yo', name: 'Yoruba' },
+  { code: 'ig', name: 'Igbo' },
+  { code: 'ha', name: 'Haoussa' },
+  { code: 'zu', name: 'Zoulou' },
+  { code: 'xh', name: 'Xhosa' },
+  { code: 'af', name: 'Afrikaans' },
+  // Amériques
+  { code: 'pt-BR', name: 'Portugais (Brésil)' },
+  { code: 'es-MX', name: 'Espagnol (Mexique)' },
+  { code: 'ht', name: 'Créole haïtien' },
+  // Autres
+  { code: 'ka', name: 'Géorgien' },
+  { code: 'hy', name: 'Arménien' },
+  { code: 'az', name: 'Azéri' },
+  { code: 'kk', name: 'Kazakh' },
+  { code: 'uz', name: 'Ouzbek' },
+  { code: 'mn', name: 'Mongol' },
+  { code: 'eo', name: 'Espéranto' },
+  { code: 'la', name: 'Latin' },
 ];
 
-const LANGUAGE_NAMES = {
-  en: 'Anglais', fr: 'Français', es: 'Espagnol', de: 'Allemand',
-  it: 'Italien', pt: 'Portugais', zh: 'Chinois', ja: 'Japonais',
-  ko: 'Coréen', ar: 'Arabe', hi: 'Hindi', ru: 'Russe',
-};
+const LANGUAGE_NAMES = LANGUAGES.reduce((acc, lang) => {
+  acc[lang.code] = lang.name;
+  return acc;
+}, {});
 
 const LanguageBadge = ({ code, type, label }) => {
   if (!code) return null;
@@ -155,8 +229,31 @@ export default function EditorPage() {
     }
   };
 
-  const handleDownload = () => {
-    window.open(`${API}/videos/${videoId}/download`, '_blank');
+  const handleDownload = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/videos/${videoId}/download`, {
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `subtitled_${video?.original_filename || 'video.mp4'}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Téléchargement démarré !');
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error('Erreur lors du téléchargement');
+    }
   };
 
   const handleSaveSubtitles = async () => {
@@ -506,7 +603,10 @@ export default function EditorPage() {
                   key={segment.id}
                   ref={el => segmentRefs.current[index] = el}
                   className={`segment-card p-4 cursor-pointer ${activeSegmentIndex === index ? 'active' : ''}`}
-                  onClick={() => handleSeek(segment.start_time)}
+                  onClick={() => {
+                    handleSeek(segment.start_time);
+                    setActiveSegmentIndex(index);
+                  }}
                 >
                   {/* Timecode */}
                   <div className="flex items-center gap-2 mb-3">
