@@ -269,6 +269,7 @@ export default function EditorPage() {
     try {
       await axios.put(`${API}/videos/${videoId}/subtitles`, { segments });
       toast.success('Sous-titres sauvegardés !');
+      setHasLocalChanges(false);
     } catch (error) {
       toast.error('Erreur lors de la sauvegarde');
     } finally {
