@@ -107,6 +107,31 @@ class TranscriptorIAAPITester:
         if response and 'token' in response:
             self.token = response['token']
             self.test_user = test_user
+            self.test_user_id = response.get('user', {}).get('id')
+            return True
+        return False
+
+    def test_user_login(self):
+        """Test user login with registered user"""
+        if not hasattr(self, 'test_user'):
+            self.log_test("User Login", False, "No test user available")
+            return False
+            
+        login_data = {
+            "email": self.test_user["email"],
+            "password": self.test_user["password"]
+        }
+        
+        response = self.run_test(
+            "User Login",
+            "POST",
+            "auth/login",
+            200,
+            data=login_data
+        )
+        
+        if response and 'token' in response:
+            self.token = response['token']
             return True
         return False
 
