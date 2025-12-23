@@ -159,21 +159,29 @@ export default function EditorPage() {
     position: 'bottom'
   });
   const [saving, setSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [hasLocalChanges, setHasLocalChanges] = useState(false);
 
   useEffect(() => {
     fetchVideo();
-    const interval = setInterval(fetchVideo, 2000);
+    const interval = setInterval(() => {
+      // Only fetch if not editing and no local changes
+      if (!isEditing && !hasLocalChanges) {
+        fetchVideo();
+      }
+    }, 2000);
     return () => clearInterval(interval);
-  }, [videoId]);
+  }, [videoId, isEditing, hasLocalChanges]);
 
   useEffect(() => {
-    if (video?.segments) {
+    // Only update segments from server if no local changes
+    if (video?.segments && !hasLocalChanges) {
       setSegments(video.segments);
     }
     if (video?.subtitle_settings) {
       setSubtitleSettings(video.subtitle_settings);
     }
-  }, [video]);
+  }, [video, hasLocalChanges]);
 
   useEffect(() => {
     if (activeSegmentIndex !== null && segmentRefs.current[activeSegmentIndex]) {
