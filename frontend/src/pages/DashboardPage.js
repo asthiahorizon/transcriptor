@@ -376,7 +376,7 @@ export default function DashboardPage() {
                   
                   {(projectVideos[project.id]?.length || 0) === 0 && (
                     <p className="text-sm text-slate-400 text-center py-4">
-                      Aucune vidéo
+                      {t('noVideos')}
                     </p>
                   )}
                 </div>
