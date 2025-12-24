@@ -890,77 +890,145 @@ async def process_transcription(video_id: str, file_path: str):
         await db.videos.update_one({"id": video_id}, {"$set": {"progress": 85}})
         
         # Process segments from Infomaniak response
-        # Split long segments into smaller chunks (~5 seconds, ~80 chars, without cutting words)
+        # Use word-level timestamps if available for more precise segmentation
         segments = []
-        response_segments = transcription_result.get('segments', [])
         
         MAX_DURATION = 5.0  # Max 5 seconds per segment
         MAX_CHARS = 80  # Max ~80 characters (2 lines on screen)
         
-        for seg in response_segments:
-            start = seg.get('start', 0)
-            end = seg.get('end', 0)
-            text = seg.get('text', '').strip()
-            duration = end - start
+        # Check if we have word-level timestamps
+        words_data = transcription_result.get('words', [])
+        
+        if words_data:
+            # Use word-level timestamps for precise segmentation
+            logger.info(f"Using word-level timestamps for video {video_id}")
             
-            if not text:
-                continue
+            current_chunk = []
+            current_start = None
+            current_chars = 0
             
-            # If segment is short enough, keep as is
-            if duration <= MAX_DURATION and len(text) <= MAX_CHARS:
-                segments.append({
-                    "id": str(uuid.uuid4()),
-                    "start_time": start,
-                    "end_time": end,
-                    "original_text": text,
-                    "translated_text": ""
-                })
-            else:
-                # Split long segment into smaller chunks
-                words = text.split()
-                if not words:
+            for word_info in words_data:
+                word = word_info.get('word', '').strip()
+                word_start = word_info.get('start', 0)
+                word_end = word_info.get('end', 0)
+                
+                if not word:
                     continue
                 
-                # Calculate time per word
-                time_per_word = duration / len(words) if words else 0
+                word_len = len(word) + 1  # +1 for space
                 
-                current_chunk = []
-                current_start = start
-                current_chars = 0
+                if current_start is None:
+                    current_start = word_start
                 
-                for i, word in enumerate(words):
-                    word_len = len(word) + 1  # +1 for space
+                # Calculate current chunk duration
+                chunk_duration = word_end - current_start if current_start else 0
+                
+                # Check if we should start a new segment
+                should_split = (
+                    current_chunk and 
+                    (current_chars + word_len > MAX_CHARS or chunk_duration > MAX_DURATION)
+                )
+                
+                if should_split:
+                    # Get end time from last word in chunk
+                    chunk_end = current_chunk[-1]['end'] if current_chunk else word_start
                     
-                    # Check if adding this word would exceed limits
-                    chunk_duration = (i - len(current_chunk) + 1) * time_per_word if current_chunk else time_per_word
-                    
-                    if current_chunk and (current_chars + word_len > MAX_CHARS or len(current_chunk) * time_per_word > MAX_DURATION):
-                        # Save current chunk
-                        chunk_end = current_start + len(current_chunk) * time_per_word
-                        segments.append({
-                            "id": str(uuid.uuid4()),
-                            "start_time": round(current_start, 2),
-                            "end_time": round(chunk_end, 2),
-                            "original_text": ' '.join(current_chunk),
-                            "translated_text": ""
-                        })
-                        # Start new chunk
-                        current_start = chunk_end
-                        current_chunk = [word]
-                        current_chars = word_len
-                    else:
-                        current_chunk.append(word)
-                        current_chars += word_len
-                
-                # Save remaining chunk
-                if current_chunk:
                     segments.append({
                         "id": str(uuid.uuid4()),
                         "start_time": round(current_start, 2),
-                        "end_time": round(end, 2),
-                        "original_text": ' '.join(current_chunk),
+                        "end_time": round(chunk_end, 2),
+                        "original_text": ' '.join([w['word'] for w in current_chunk]),
                         "translated_text": ""
                     })
+                    
+                    # Start new chunk
+                    current_start = word_start
+                    current_chunk = [word_info]
+                    current_chars = word_len
+                else:
+                    current_chunk.append(word_info)
+                    current_chars += word_len
+            
+            # Save remaining chunk
+            if current_chunk:
+                chunk_end = current_chunk[-1].get('end', current_start + 1)
+                segments.append({
+                    "id": str(uuid.uuid4()),
+                    "start_time": round(current_start, 2),
+                    "end_time": round(chunk_end, 2),
+                    "original_text": ' '.join([w['word'] for w in current_chunk]),
+                    "translated_text": ""
+                })
+        else:
+            # Fallback: Use segment-level data with word splitting
+            logger.info(f"Using segment-level timestamps with word splitting for video {video_id}")
+            response_segments = transcription_result.get('segments', [])
+            
+            for seg in response_segments:
+                start = seg.get('start', 0)
+                end = seg.get('end', 0)
+                text = seg.get('text', '').strip()
+                duration = end - start
+                
+                if not text:
+                    continue
+                
+                # If segment is short enough, keep as is
+                if duration <= MAX_DURATION and len(text) <= MAX_CHARS:
+                    segments.append({
+                        "id": str(uuid.uuid4()),
+                        "start_time": round(start, 2),
+                        "end_time": round(end, 2),
+                        "original_text": text,
+                        "translated_text": ""
+                    })
+                else:
+                    # Split long segment into smaller chunks
+                    words = text.split()
+                    if not words:
+                        continue
+                    
+                    # Calculate time per word
+                    time_per_word = duration / len(words) if words else 0
+                    
+                    current_chunk = []
+                    current_start = start
+                    current_chars = 0
+                    
+                    for i, word in enumerate(words):
+                        word_len = len(word) + 1  # +1 for space
+                        word_time = i * time_per_word
+                        
+                        # Check if adding this word would exceed limits
+                        chunk_duration = len(current_chunk) * time_per_word
+                        
+                        if current_chunk and (current_chars + word_len > MAX_CHARS or chunk_duration >= MAX_DURATION):
+                            # Save current chunk
+                            chunk_end = current_start + chunk_duration
+                            segments.append({
+                                "id": str(uuid.uuid4()),
+                                "start_time": round(current_start, 2),
+                                "end_time": round(chunk_end, 2),
+                                "original_text": ' '.join(current_chunk),
+                                "translated_text": ""
+                            })
+                            # Start new chunk
+                            current_start = chunk_end
+                            current_chunk = [word]
+                            current_chars = word_len
+                        else:
+                            current_chunk.append(word)
+                            current_chars += word_len
+                    
+                    # Save remaining chunk
+                    if current_chunk:
+                        segments.append({
+                            "id": str(uuid.uuid4()),
+                            "start_time": round(current_start, 2),
+                            "end_time": round(end, 2),
+                            "original_text": ' '.join(current_chunk),
+                            "translated_text": ""
+                        })
         
         source_language = transcription_result.get('language', 'en')
         
