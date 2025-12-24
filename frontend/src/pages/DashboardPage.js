@@ -343,7 +343,7 @@ export default function DashboardPage() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-lg text-slate-800 truncate">{project.name}</h3>
                     <p className="text-sm text-slate-500 truncate">
-                      {project.description || 'Pas de description'}
+                      {project.description || t('noDescription')}
                     </p>
                   </div>
                 </div>
