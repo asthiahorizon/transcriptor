@@ -41,6 +41,7 @@ const LanguageBadge = ({ code, type }) => {
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   
   const [projects, setProjects] = useState([]);
