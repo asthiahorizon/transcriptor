@@ -810,10 +810,11 @@ async def process_transcription(video_id: str, file_path: str):
                 files = {
                     'file': (Path(audio_path).name, f, 'audio/mpeg'),
                 }
+                # Use word-level timestamps for more precise segmentation
                 data = {
                     'model': 'whisper',
                     'response_format': 'verbose_json',
-                    'timestamp_granularities[]': 'segment'
+                    'timestamp_granularities[]': 'word'
                 }
                 
                 # Submit transcription request
