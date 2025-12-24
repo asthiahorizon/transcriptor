@@ -1297,7 +1297,7 @@ async def process_video_export(video_id: str, video: dict):
                 
                 with open(output_path, 'rb') as f:
                     # Upload the subtitled video to Supabase
-                    response = supabase.storage.from_(SUPABASE_BUCKET).upload(
+                    supabase.storage.from_(SUPABASE_BUCKET).upload(
                         supabase_path,
                         f.read(),
                         file_options={"content-type": "video/mp4", "upsert": "true"}
