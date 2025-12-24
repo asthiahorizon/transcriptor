@@ -21,13 +21,11 @@ backend:
     preBuild:
       commands:
         # Install FFmpeg - download static build
-        - mkdir -p /tmp/ffmpeg
-        - cd /tmp/ffmpeg
-        - curl -L "https://github.com/eugeneware/ffmpeg-static/releases/download/b6.0/ffmpeg-linux-x64" -o ffmpeg
-        - curl -L "https://github.com/eugeneware/ffmpeg-static/releases/download/b6.0/ffprobe-linux-x64" -o ffprobe
-        - chmod +x ffmpeg ffprobe
-        - cp ffmpeg ffprobe /usr/local/bin/ 2>/dev/null || mkdir -p $CODEBUILD_SRC_DIR/bin && cp ffmpeg ffprobe $CODEBUILD_SRC_DIR/bin/
-        - cd $CODEBUILD_SRC_DIR
+        - curl -L "https://github.com/eugeneware/ffmpeg-static/releases/download/b6.0/ffmpeg-linux-x64" -o /tmp/ffmpeg
+        - curl -L "https://github.com/eugeneware/ffmpeg-static/releases/download/b6.0/ffprobe-linux-x64" -o /tmp/ffprobe
+        - chmod +x /tmp/ffmpeg /tmp/ffprobe
+        - mkdir -p backend/bin
+        - cp /tmp/ffmpeg /tmp/ffprobe backend/bin/
         - cd backend
         - pip install -r requirements.txt
     build:
