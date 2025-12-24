@@ -22,6 +22,7 @@ import {
 import { Slider } from '../components/ui/slider';
 import { Progress } from '../components/ui/progress';
 import LanguageSelector from '../components/LanguageSelector';
+import { useLanguage } from '../context/LanguageContext';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
