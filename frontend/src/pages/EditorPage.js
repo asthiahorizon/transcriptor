@@ -403,7 +403,9 @@ export default function EditorPage() {
     );
   }
 
-  const videoUrl = `${API}/files/uploads/${video?.filename}`;
+  // Generate video URL with auth token
+  const token = localStorage.getItem('token');
+  const videoUrl = `${API}/files/uploads/${video?.filename}?token=${token}`;
   const isProcessing = ['transcribing', 'translating', 'rendering'].includes(video?.status);
   const statusInfo = getStatusInfo(video?.status);
   const activeSegment = activeSegmentIndex !== null ? segments[activeSegmentIndex] : null;
