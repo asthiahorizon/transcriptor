@@ -320,6 +320,60 @@ async def grant_subscription(user_id: str, days: int = 30, admin: dict = Depends
     )
     return {"message": f"Subscription granted until {end_date.isoformat()}"}
 
+@api_router.post("/admin/users/{user_id}/set-vip")
+async def set_vip(user_id: str, admin: dict = Depends(require_admin)):
+    target_user = await db.users.find_one({"id": user_id})
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # VIP = unlimited subscription (no end date)
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {
+            "is_subscribed": True,
+            "is_vip": True,
+            "subscription_end": None
+        }}
+    )
+    return {"message": "User set as VIP"}
+
+@api_router.post("/admin/users/{user_id}/remove-vip")
+async def remove_vip(user_id: str, admin: dict = Depends(require_admin)):
+    target_user = await db.users.find_one({"id": user_id})
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {
+            "is_vip": False,
+            "is_subscribed": False,
+            "subscription_end": None
+        }}
+    )
+    return {"message": "VIP status removed"}
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(user_id: str, admin: dict = Depends(require_admin)):
+    target_user = await db.users.find_one({"id": user_id})
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Don't allow deleting yourself
+    if user_id == admin["id"]:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+    
+    # Delete user's projects and videos
+    user_projects = await db.projects.find({"user_id": user_id}).to_list(1000)
+    for project in user_projects:
+        await db.videos.delete_many({"project_id": project["id"]})
+    await db.projects.delete_many({"user_id": user_id})
+    
+    # Delete user
+    await db.users.delete_one({"id": user_id})
+    
+    return {"message": "User deleted"}
+
 # ============ STRIPE SUBSCRIPTION ROUTES ============
 
 @api_router.post("/subscription/checkout", response_model=CheckoutResponse)
