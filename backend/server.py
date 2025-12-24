@@ -192,6 +192,32 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+async def get_user_from_token_or_query(request: Request, credentials: HTTPAuthorizationCredentials = Depends(optional_security)) -> dict:
+    """Get user from Bearer token or query parameter token"""
+    token = None
+    
+    # Try Bearer token first
+    if credentials:
+        token = credentials.credentials
+    else:
+        # Try query parameter
+        token = request.query_params.get('token')
+    
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get('user_id')
+        user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        return user
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
 async def get_optional_user(credentials: HTTPAuthorizationCredentials = Depends(optional_security)) -> Optional[dict]:
     if not credentials:
         return None
