@@ -260,9 +260,9 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-slate-800 mb-1" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              Mes Projets
+              {t('myProjects')}
             </h1>
-            <p className="text-slate-500">Gérez vos projets de transcription vidéo</p>
+            <p className="text-slate-500">{t('manageProjects')}</p>
           </div>
           
           <button
@@ -271,7 +271,7 @@ export default function DashboardPage() {
             data-testid="new-project-btn"
           >
             <Plus className="w-5 h-5" />
-            Nouveau Projet
+            {t('newProject')}
           </button>
         </div>
 
@@ -281,7 +281,7 @@ export default function DashboardPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input
               type="text"
-              placeholder="Rechercher un projet..."
+              placeholder={t('searchProject')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
