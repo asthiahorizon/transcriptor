@@ -11,6 +11,7 @@ const translations = {
     registerButton: "S'inscrire",
     noAccount: "Pas de compte ?",
     hasAccount: 'Déjà un compte ?',
+    backHome: 'Retour accueil',
     
     // Dashboard
     myProjects: 'Mes Projets',
@@ -28,6 +29,13 @@ const translations = {
     hello: 'Bonjour',
     logout: 'Déconnexion',
     admin: 'Admin',
+    editProject: 'Modifier le projet',
+    deleteProject: 'Supprimer',
+    videos: 'vidéos',
+    noVideos: 'Aucune vidéo',
+    uploadVideo: 'Uploader une vidéo',
+    selectFile: 'Sélectionner un fichier',
+    dragDrop: 'ou glissez-déposez',
     
     // Editor
     transcribe: 'Transcrire la vidéo',
@@ -48,6 +56,13 @@ const translations = {
     top: 'Haut',
     bottom: 'Bas',
     apply: 'Appliquer',
+    subtitles: 'Sous-titres',
+    segments: 'segments',
+    noSubtitles: 'Aucun sous-titre',
+    transcribeToGenerate: 'Transcrivez la vidéo pour générer les sous-titres',
+    sourceLanguage: 'Langue source',
+    targetLanguage: 'Langue cible',
+    back: 'Retour',
     transcribing: 'Transcription en cours...',
     translating: 'Traduction en cours...',
     generating: 'Génération en cours...',
