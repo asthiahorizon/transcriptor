@@ -326,10 +326,13 @@ export default function EditorPage() {
   };
 
   const handleProgressClick = (e) => {
-    if (!duration) return;
+    // Use video's duration directly if state duration is not set
+    const videoDuration = duration || videoRef.current?.duration;
+    if (!videoDuration) return;
+    
     const rect = e.currentTarget.getBoundingClientRect();
     const percent = (e.clientX - rect.left) / rect.width;
-    const newTime = percent * duration;
+    const newTime = Math.max(0, Math.min(percent * videoDuration, videoDuration));
     handleSeek(newTime);
   };
 
