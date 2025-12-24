@@ -72,7 +72,7 @@ export default function DashboardPage() {
         fetchProjectVideos(project.id);
       }
     } catch (error) {
-      toast.error('Erreur de chargement des projets');
+      toast.error(t('errorLoadingProjects'));
     } finally {
       setLoading(false);
     }
