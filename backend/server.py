@@ -37,7 +37,6 @@ SUPABASE_BUCKET = 'videos'
 supabase: Client = None
 if SUPABASE_URL and SUPABASE_KEY:
     supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-    logger.info("Supabase client initialized with service key")
 
 # JWT Config
 JWT_SECRET = os.environ.get('JWT_SECRET', 'transcriptoria-secret-key-2024')
