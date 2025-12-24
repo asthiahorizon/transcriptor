@@ -20,30 +20,20 @@ backend:
   phases:
     preBuild:
       commands:
-        # Install FFmpeg static binary (using git release, .tar.gz format)
-        - curl -L https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz -o ffmpeg.tar.xz || curl -L https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip -o ffmpeg.zip
-        - |
-          if [ -f ffmpeg.tar.xz ]; then
-            yum install -y xz || amazon-linux-extras install -y epel && yum install -y xz
-            tar -xf ffmpeg.tar.xz
-            mv ffmpeg-*/bin/ffmpeg ./ffmpeg
-            mv ffmpeg-*/bin/ffprobe ./ffprobe
-          elif [ -f ffmpeg.zip ]; then
-            unzip -q ffmpeg.zip
-            mv ffmpeg-*/bin/ffmpeg.exe ./ffmpeg 2>/dev/null || mv ffmpeg-*/bin/ffmpeg ./ffmpeg
-            mv ffmpeg-*/bin/ffprobe.exe ./ffprobe 2>/dev/null || mv ffmpeg-*/bin/ffprobe ./ffprobe
-          fi
-        - chmod +x ./ffmpeg ./ffprobe
-        - export PATH=$PWD:$PATH
+        # Install FFmpeg - download static build
+        - mkdir -p /tmp/ffmpeg
+        - cd /tmp/ffmpeg
+        - curl -L "https://github.com/eugeneware/ffmpeg-static/releases/download/b6.0/ffmpeg-linux-x64" -o ffmpeg
+        - curl -L "https://github.com/eugeneware/ffmpeg-static/releases/download/b6.0/ffprobe-linux-x64" -o ffprobe
+        - chmod +x ffmpeg ffprobe
+        - cp ffmpeg ffprobe /usr/local/bin/ 2>/dev/null || mkdir -p $CODEBUILD_SRC_DIR/bin && cp ffmpeg ffprobe $CODEBUILD_SRC_DIR/bin/
+        - cd $CODEBUILD_SRC_DIR
         - cd backend
         - pip install -r requirements.txt
     build:
       commands:
         - echo "Backend build complete"
-        - echo "FFmpeg location:" && which ffmpeg || echo "./ffmpeg"
   artifacts:
     baseDirectory: backend
     files:
       - '**/*'
-      - '../ffmpeg'
-      - '../ffprobe'
