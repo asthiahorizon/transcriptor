@@ -235,6 +235,7 @@ export default function DashboardPage() {
                 Admin
               </button>
             )}
+            <LanguageSelector />
             <span className="text-slate-500">
               Bonjour, <span className="text-slate-700 font-medium">{user?.name}</span>
             </span>
