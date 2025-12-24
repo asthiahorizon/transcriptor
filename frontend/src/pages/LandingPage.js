@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { Subtitles, Languages, Download, Sparkles, ArrowRight, Shield, Lock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import LanguageSelector from '../components/LanguageSelector';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const handleGetStarted = () => {
     if (user) {
@@ -33,6 +36,7 @@ export default function LandingPage() {
         </div>
         
         <div className="flex items-center gap-4">
+          <LanguageSelector />
           {user ? (
             <button
               onClick={() => navigate('/dashboard')}
