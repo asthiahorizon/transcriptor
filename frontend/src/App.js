@@ -71,53 +71,55 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <div className="min-h-screen">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/auth" element={
-              <PublicRoute>
-                <AuthPage />
-              </PublicRoute>
-            } />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/subscription/success" element={
-              <ProtectedRoute requireSubscription={false}>
-                <SubscriptionSuccessPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/editor/:videoId" element={
-              <ProtectedRoute>
-                <EditorPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin" element={
-              <AdminRoute>
-                <AdminPage />
-              </AdminRoute>
-            } />
-          </Routes>
-          <Toaster 
-            position="bottom-right"
-            toastOptions={{
-              style: {
-                background: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(148, 163, 184, 0.3)',
-                color: '#1E293B',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-              },
-            }}
-          />
-        </div>
-      </BrowserRouter>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <div className="min-h-screen">
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/auth" element={
+                <PublicRoute>
+                  <AuthPage />
+                </PublicRoute>
+              } />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/subscription/success" element={
+                <ProtectedRoute requireSubscription={false}>
+                  <SubscriptionSuccessPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/editor/:videoId" element={
+                <ProtectedRoute>
+                  <EditorPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin" element={
+                <AdminRoute>
+                  <AdminPage />
+                </AdminRoute>
+              } />
+            </Routes>
+            <Toaster 
+              position="bottom-right"
+              toastOptions={{
+                style: {
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(148, 163, 184, 0.3)',
+                  color: '#1E293B',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+                },
+              }}
+            />
+          </div>
+        </BrowserRouter>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 
