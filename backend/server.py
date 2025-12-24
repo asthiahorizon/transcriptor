@@ -840,6 +840,7 @@ async def process_transcription(video_id: str, file_path: str):
         async with httpx.AsyncClient(timeout=60.0) as client:
             headers = {"Authorization": f"Bearer {INFOMANIAK_API_KEY}"}
             max_attempts = 60  # 5 minutes max
+            transcription_result = None
             
             for attempt in range(max_attempts):
                 await asyncio.sleep(5)  # Wait 5 seconds between polls
@@ -854,43 +855,36 @@ async def process_transcription(video_id: str, file_path: str):
                     continue
                 
                 status_data = status_response.json()
-                status = status_data.get('data', {}).get('status', '')
                 
-                progress = min(40 + (attempt * 1), 80)
-                await db.videos.update_one({"id": video_id}, {"$set": {"progress": progress}})
-                
-                if status == 'done':
-                    # Download results
-                    download_response = await client.get(
-                        f"{INFOMANIAK_API_BASE}/results/{batch_id}/download",
-                        headers=headers
-                    )
+                # Infomaniak returns 'data' as a JSON string, not a dict
+                data_field = status_data.get('data')
+                if isinstance(data_field, str):
+                    # Parse the JSON string directly - this IS the transcription result
+                    transcription_result = json.loads(data_field)
+                    logger.info(f"Got transcription result from data field")
+                    break
+                elif isinstance(data_field, dict):
+                    status = data_field.get('status', '')
                     
-                    if download_response.status_code == 200:
-                        # Try to parse JSON, handle different response formats
-                        try:
+                    progress = min(40 + (attempt * 1), 80)
+                    await db.videos.update_one({"id": video_id}, {"$set": {"progress": progress}})
+                    
+                    if status == 'done':
+                        # Download results
+                        download_response = await client.get(
+                            f"{INFOMANIAK_API_BASE}/results/{batch_id}/download",
+                            headers=headers
+                        )
+                        
+                        if download_response.status_code == 200:
                             transcription_result = download_response.json()
-                            logger.info(f"Transcription result type: {type(transcription_result)}")
-                            
-                            # If result is wrapped in 'data' key
-                            if isinstance(transcription_result, dict) and 'data' in transcription_result:
-                                transcription_result = transcription_result['data']
-                            
-                            # If result is a string, try to parse it
-                            if isinstance(transcription_result, str):
-                                import json as json_module
-                                transcription_result = json_module.loads(transcription_result)
-                                
-                        except Exception as parse_error:
-                            logger.error(f"Failed to parse transcription result: {parse_error}")
-                            logger.error(f"Raw response: {download_response.text[:500]}")
-                            raise Exception(f"Failed to parse transcription result: {parse_error}")
-                        break
-                elif status == 'error':
-                    error_msg = status_data.get('data', {}).get('error', 'Unknown error')
-                    raise Exception(f"Transcription failed: {error_msg}")
-            else:
-                raise Exception("Transcription timed out")
+                            break
+                    elif status == 'error':
+                        error_msg = data_field.get('error', 'Unknown error')
+                        raise Exception(f"Transcription failed: {error_msg}")
+            
+            if transcription_result is None:
+                raise Exception("Transcription timed out or failed to get result")
         
         await db.videos.update_one({"id": video_id}, {"$set": {"progress": 85}})
         
