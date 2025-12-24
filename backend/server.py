@@ -1297,8 +1297,26 @@ async def download_video(video_id: str, user: dict = Depends(require_subscriptio
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
     
-    if video.get("status") != "completed" or not video.get("output_path"):
+    if video.get("status") != "completed":
         raise HTTPException(status_code=400, detail="Video not ready for download")
+    
+    # Try Supabase first if output is stored there
+    if video.get("output_storage_type") == "supabase" and video.get("output_supabase_path") and supabase:
+        try:
+            # Generate signed URL for download (valid for 1 hour)
+            signed_url = supabase.storage.from_(SUPABASE_BUCKET).create_signed_url(
+                video["output_supabase_path"],
+                3600  # 1 hour expiry
+            )
+            if signed_url and signed_url.get("signedURL"):
+                from fastapi.responses import RedirectResponse
+                return RedirectResponse(url=signed_url["signedURL"])
+        except Exception as e:
+            logger.error(f"Supabase download signed URL error: {e}")
+    
+    # Fallback to local file
+    if not video.get("output_path"):
+        raise HTTPException(status_code=400, detail="Video output not available")
     
     return FileResponse(
         video["output_path"],
