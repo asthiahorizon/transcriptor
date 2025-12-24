@@ -195,10 +195,21 @@ export default function EditorPage() {
     try {
       const response = await axios.get(`${API}/videos/${videoId}`);
       setVideo(response.data);
+      
+      // Fetch project info for title
+      if (response.data?.project_id && !project) {
+        try {
+          const projectRes = await axios.get(`${API}/projects/${response.data.project_id}`);
+          setProject(projectRes.data);
+        } catch (e) {
+          // Project fetch failed, not critical
+        }
+      }
+      
       if (loading) setLoading(false);
     } catch (error) {
       if (loading) {
-        toast.error('Erreur de chargement de la vidéo');
+        toast.error(t('error'));
         navigate('/dashboard');
       }
     }
