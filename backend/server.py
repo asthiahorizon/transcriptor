@@ -867,10 +867,28 @@ async def process_transcription(video_id: str, file_path: str):
                     )
                     
                     if download_response.status_code == 200:
-                        transcription_result = download_response.json()
+                        # Try to parse JSON, handle different response formats
+                        try:
+                            transcription_result = download_response.json()
+                            logger.info(f"Transcription result type: {type(transcription_result)}")
+                            
+                            # If result is wrapped in 'data' key
+                            if isinstance(transcription_result, dict) and 'data' in transcription_result:
+                                transcription_result = transcription_result['data']
+                            
+                            # If result is a string, try to parse it
+                            if isinstance(transcription_result, str):
+                                import json as json_module
+                                transcription_result = json_module.loads(transcription_result)
+                                
+                        except Exception as parse_error:
+                            logger.error(f"Failed to parse transcription result: {parse_error}")
+                            logger.error(f"Raw response: {download_response.text[:500]}")
+                            raise Exception(f"Failed to parse transcription result: {parse_error}")
                         break
                 elif status == 'error':
-                    raise Exception(f"Transcription failed: {status_data}")
+                    error_msg = status_data.get('data', {}).get('error', 'Unknown error')
+                    raise Exception(f"Transcription failed: {error_msg}")
             else:
                 raise Exception("Transcription timed out")
         
