@@ -307,15 +307,17 @@ export default function EditorPage() {
       const time = videoRef.current.currentTime;
       setCurrentTime(time);
       
+      // Find the active segment based on current time
       const activeIndex = segments.findIndex(
         seg => time >= seg.start_time && time < seg.end_time
       );
       
-      if (activeIndex >= 0 && activeIndex !== activeSegmentIndex) {
-        setActiveSegmentIndex(activeIndex);
+      // Only update if the index changed
+      if (activeIndex !== activeSegmentIndex) {
+        setActiveSegmentIndex(activeIndex >= 0 ? activeIndex : null);
         
-        // Scroll segment into view within the container
-        if (segmentRefs.current[activeIndex]) {
+        // Auto-scroll to active segment
+        if (activeIndex >= 0 && segmentRefs.current[activeIndex]) {
           const container = document.getElementById('segments-container');
           const segment = segmentRefs.current[activeIndex];
           if (container && segment) {
@@ -328,33 +330,38 @@ export default function EditorPage() {
             }
           }
         }
-      } else if (activeIndex < 0) {
-        setActiveSegmentIndex(null);
       }
     }
   };
 
-  const handleSeek = (time) => {
-    if (videoRef.current && !isNaN(time) && time >= 0) {
-      // Don't check duration limit as it might not be available yet
-      videoRef.current.currentTime = time;
-      setCurrentTime(time);
+  const handleSeek = (newTime) => {
+    if (videoRef.current && !isNaN(newTime) && isFinite(newTime) && newTime >= 0) {
+      const videoDuration = duration || videoRef.current.duration || 0;
+      const clampedTime = Math.min(newTime, videoDuration);
       
-      // Ensure video is paused at the new position to show the frame
-      if (!isPlaying) {
-        videoRef.current.pause();
-      }
+      videoRef.current.currentTime = clampedTime;
+      setCurrentTime(clampedTime);
+      
+      // Find and set the active segment for this time
+      const activeIndex = segments.findIndex(
+        seg => clampedTime >= seg.start_time && clampedTime < seg.end_time
+      );
+      setActiveSegmentIndex(activeIndex >= 0 ? activeIndex : null);
     }
+  };
+
+  const handleSliderChange = (values) => {
+    const newTime = values[0];
+    handleSeek(newTime);
   };
 
   const handleProgressClick = (e) => {
-    // Use video's duration directly if state duration is not set
     const videoDuration = duration || videoRef.current?.duration;
-    if (!videoDuration) return;
+    if (!videoDuration || videoDuration <= 0) return;
     
     const rect = e.currentTarget.getBoundingClientRect();
-    const percent = (e.clientX - rect.left) / rect.width;
-    const newTime = Math.max(0, Math.min(percent * videoDuration, videoDuration));
+    const percent = Math.max(0, Math.min((e.clientX - rect.left) / rect.width, 1));
+    const newTime = percent * videoDuration;
     handleSeek(newTime);
   };
 
