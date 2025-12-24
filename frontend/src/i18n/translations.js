@@ -125,7 +125,6 @@ const translations = {
     loading: 'Chargement...',
     error: 'Erreur',
     success: 'Succès',
-    back: 'Retour',
     copyright: '© 2024 Asthia Horizon Sàrl'
   },
   
@@ -140,6 +139,7 @@ const translations = {
     registerButton: 'Sign up',
     noAccount: "Don't have an account?",
     hasAccount: 'Already have an account?',
+    backHome: 'Back to home',
     
     // Dashboard
     myProjects: 'My Projects',
@@ -157,6 +157,13 @@ const translations = {
     hello: 'Hello',
     logout: 'Logout',
     admin: 'Admin',
+    editProject: 'Edit project',
+    deleteProject: 'Delete',
+    videos: 'videos',
+    noVideos: 'No videos',
+    uploadVideo: 'Upload video',
+    selectFile: 'Select file',
+    dragDrop: 'or drag and drop',
     
     // Editor
     transcribe: 'Transcribe video',
@@ -173,6 +180,17 @@ const translations = {
     fontColor: 'Font color',
     backgroundColor: 'Background color',
     opacity: 'Opacity',
+    position: 'Position',
+    top: 'Top',
+    bottom: 'Bottom',
+    apply: 'Apply',
+    subtitles: 'Subtitles',
+    segments: 'segments',
+    noSubtitles: 'No subtitles',
+    transcribeToGenerate: 'Transcribe video to generate subtitles',
+    sourceLanguage: 'Source language',
+    targetLanguage: 'Target language',
+    back: 'Back',
     position: 'Position',
     top: 'Top',
     bottom: 'Bottom',
