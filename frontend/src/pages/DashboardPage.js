@@ -139,14 +139,14 @@ export default function DashboardPage() {
   };
 
   const deleteProject = async (projectId) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) return;
+    if (!window.confirm(t('confirmDeleteProject'))) return;
     
     try {
       await axios.delete(`${API}/projects/${projectId}`);
       setProjects(projects.filter(p => p.id !== projectId));
-      toast.success('Projet supprimé');
+      toast.success(t('projectDeleted'));
     } catch (error) {
-      toast.error('Erreur lors de la suppression');
+      toast.error(t('errorDeletingProject'));
     }
   };
 
@@ -171,10 +171,10 @@ export default function DashboardPage() {
       }));
       
       setShowUpload(false);
-      toast.success('Vidéo uploadée ! Redirection vers l\'éditeur...');
+      toast.success(t('videoUploaded'));
       navigate(`/editor/${response.data.id}`);
     } catch (error) {
-      toast.error('Erreur lors de l\'upload');
+      toast.error(t('errorUploading'));
     } finally {
       setUploading(false);
     }
