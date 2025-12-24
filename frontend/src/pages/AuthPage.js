@@ -80,12 +80,12 @@ export default function AuthPage() {
         {/* Title */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-2 text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-            {isLogin ? 'Bienvenue' : 'Créer un compte'}
+            {isLogin ? t('login') : t('register')}
           </h1>
           <p className="text-slate-500">
             {isLogin 
-              ? 'Entrez vos identifiants pour accéder à vos projets' 
-              : 'Commencez à créer des vidéos sous-titrées'}
+              ? t('loginButton') 
+              : t('registerButton')}
           </p>
         </div>
 
@@ -93,7 +93,7 @@ export default function AuthPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {!isLogin && (
             <div className="space-y-2">
-              <label className="ui-label">Nom complet</label>
+              <label className="ui-label">{t('name')}</label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
@@ -109,7 +109,7 @@ export default function AuthPage() {
           )}
 
           <div className="space-y-2">
-            <label className="ui-label">Adresse email</label>
+            <label className="ui-label">{t('email')}</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
@@ -125,7 +125,7 @@ export default function AuthPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="ui-label">Mot de passe</label>
+            <label className="ui-label">{t('password')}</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
