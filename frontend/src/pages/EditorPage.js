@@ -694,7 +694,7 @@ export default function EditorPage() {
                   className="btn-secondary flex items-center gap-2 py-3 px-6 disabled:opacity-50"
                 >
                   <Languages className="w-5 h-5" />
-                  Traduire
+                  {t('translate')}
                 </button>
                 
                 {canExport && (
@@ -704,7 +704,7 @@ export default function EditorPage() {
                     className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold flex items-center gap-2 py-3 px-6 rounded-xl shadow-lg disabled:opacity-50"
                   >
                     <Download className="w-5 h-5" />
-                    Générer la vidéo
+                    {t('generate')}
                   </button>
                 )}
                 
@@ -714,7 +714,7 @@ export default function EditorPage() {
                     className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold flex items-center gap-2 py-3 px-6 rounded-xl shadow-lg"
                   >
                     <Download className="w-5 h-5" />
-                    Télécharger
+                    {t('download')}
                   </button>
                 )}
               </>
@@ -726,10 +726,10 @@ export default function EditorPage() {
         <div className="w-1/2 flex flex-col glass-card overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 bg-white/50 flex-shrink-0">
             <h2 className="font-bold text-lg text-slate-800">
-              Sous-titres
+              {t('subtitles')}
             </h2>
             <p className="text-sm text-slate-500">
-              {segments.length} segments
+              {segments.length} {t('segments')}
             </p>
           </div>
           
@@ -737,8 +737,8 @@ export default function EditorPage() {
             {segments.length === 0 ? (
               <div className="text-center py-12 text-slate-400">
                 <Sparkles className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                <p className="font-medium">Aucun sous-titre</p>
-                <p className="text-sm">Transcrivez la vidéo pour générer les sous-titres</p>
+                <p className="font-medium">{t('noSubtitles')}</p>
+                <p className="text-sm">{t('transcribeToGenerate')}</p>
               </div>
             ) : (
               segments.map((segment, index) => (
