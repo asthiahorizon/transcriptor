@@ -168,11 +168,21 @@ const translations = {
     
     // Landing
     tagline: 'Automated video transcription and translation',
-    subtitle: 'Transform your videos with professional subtitles in just a few clicks',
+    heroTitle1: 'Transcribe & Translate',
+    heroTitle2: 'Your Videos',
+    subtitle: 'Transform your videos with AI transcription and professional subtitles. Upload, transcribe, translate and export with ease.',
     getStarted: 'Get Started',
+    dashboard: 'Dashboard',
     privateAI: 'Private AI',
     privateAIDesc: 'Your data remains confidential',
-    poweredBy: '100% Private - Powered by Infomaniak AI',
+    poweredBy: '100% Private',
+    poweredByDesc: 'Powered by Infomaniak AI, no data is sent or analyzed externally.',
+    feature1Title: 'AI Transcription',
+    feature1Desc: 'Automatic transcription with Whisper',
+    feature2Title: 'Translation',
+    feature2Desc: 'Translate in all languages',
+    feature3Title: 'Video Export',
+    feature3Desc: 'Generate videos with subtitles',
     
     // Pricing
     pricing: 'Pricing',
