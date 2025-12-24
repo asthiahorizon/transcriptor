@@ -188,16 +188,35 @@ async def get_optional_user(credentials: HTTPAuthorizationCredentials = Depends(
 def is_admin(user: dict) -> bool:
     return user.get('is_admin', False) or user.get('email') in ADMIN_EMAILS
 
-def is_subscribed(user: dict) -> bool:
-    if is_admin(user):
-        return True
+def is_vip(user: dict) -> bool:
+    return user.get('is_vip', False)
+
+def has_active_subscription(user: dict) -> bool:
+    """Check if user has a paid active subscription (not VIP/admin bypass)"""
     if not user.get('is_subscribed'):
         return False
+    if is_vip(user):
+        return False  # VIP is not a paid subscription
     sub_end = user.get('subscription_end')
     if not sub_end:
         return False
     try:
         end_date = datetime.fromisoformat(sub_end.replace('Z', '+00:00'))
+        return datetime.now(timezone.utc) < end_date
+    except:
+        return False
+
+def has_access(user: dict) -> bool:
+    """Check if user has access (admin, VIP, or active subscription)"""
+    if is_admin(user):
+        return True
+    if is_vip(user):
+        return True
+    return has_active_subscription(user)
+
+def is_subscribed(user: dict) -> bool:
+    """Legacy function - returns True if user has any form of access"""
+    return has_access(user)
         return end_date > datetime.now(timezone.utc)
     except:
         return False
