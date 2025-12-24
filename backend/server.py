@@ -287,6 +287,7 @@ async def get_all_users(user: dict = Depends(require_admin)):
         email=u["email"],
         name=u["name"],
         is_admin=u.get("is_admin", False),
+        is_vip=u.get("is_vip", False),
         is_subscribed=is_subscribed(u),
         subscription_end=u.get("subscription_end"),
         created_at=u["created_at"]
