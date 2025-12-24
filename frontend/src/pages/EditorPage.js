@@ -883,9 +883,8 @@ export default function EditorPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-slate-200">
-                  <SelectItem value="bottom">Bas</SelectItem>
-                  <SelectItem value="top">Haut</SelectItem>
-                  <SelectItem value="middle">Milieu</SelectItem>
+                  <SelectItem value="bottom">{t('bottom')}</SelectItem>
+                  <SelectItem value="top">{t('top')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -900,7 +899,7 @@ export default function EditorPage() {
                   backgroundColor: `${subtitleSettings.background_color}${Math.round(subtitleSettings.background_opacity * 255).toString(16).padStart(2, '0')}`,
                 }}
               >
-                Aperçu du sous-titre
+                {t('subtitles')}
               </span>
             </div>
             
@@ -908,7 +907,7 @@ export default function EditorPage() {
               onClick={handleSaveSettings}
               className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-lg"
             >
-              Sauvegarder
+              {t('apply')}
             </button>
           </div>
         </DialogContent>
