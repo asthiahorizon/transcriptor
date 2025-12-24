@@ -724,7 +724,16 @@ async def delete_video(video_id: str, user: dict = Depends(require_subscription)
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
     
-    file_path = Path(video["file_path"])
+    # Delete from Supabase if stored there
+    if video.get("supabase_path") and supabase:
+        try:
+            supabase.storage.from_(SUPABASE_BUCKET).remove([video["supabase_path"]])
+            logger.info(f"Deleted video from Supabase: {video['supabase_path']}")
+        except Exception as e:
+            logger.error(f"Supabase delete error: {e}")
+    
+    # Delete local file
+    file_path = Path(video.get("file_path", ""))
     if file_path.exists():
         file_path.unlink()
     
