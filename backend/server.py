@@ -1260,7 +1260,7 @@ async def process_video_export(video_id: str, video: dict):
         subtitle_filter = f"subtitles={srt_path}:force_style='FontSize={font_size},Outline=1,Shadow=0,MarginV=30'"
         
         cmd = [
-            '/usr/bin/ffmpeg', '-y', '-i', file_path,
+            FFMPEG_PATH, '-y', '-i', file_path,
             '-vf', subtitle_filter,
             '-c:a', 'copy',
             '-progress', 'pipe:1',
