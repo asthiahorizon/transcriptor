@@ -810,7 +810,7 @@ export default function EditorPage() {
           <div className="space-y-6 mt-4">
             {/* Font Size */}
             <div className="space-y-2">
-              <label className="ui-label">Taille de police: {subtitleSettings.font_size}px</label>
+              <label className="ui-label">{t('fontSize')}: {subtitleSettings.font_size}px</label>
               <Slider
                 value={[subtitleSettings.font_size]}
                 onValueChange={([v]) => setSubtitleSettings({ ...subtitleSettings, font_size: v })}
@@ -823,7 +823,7 @@ export default function EditorPage() {
             
             {/* Font Color */}
             <div className="space-y-2">
-              <label className="ui-label">Couleur du texte</label>
+              <label className="ui-label">{t('fontColor')}</label>
               <div className="flex gap-2">
                 <input
                   type="color"
@@ -842,7 +842,7 @@ export default function EditorPage() {
             
             {/* Background Color */}
             <div className="space-y-2">
-              <label className="ui-label">Couleur de fond</label>
+              <label className="ui-label">{t('backgroundColor')}</label>
               <div className="flex gap-2">
                 <input
                   type="color"
@@ -861,7 +861,7 @@ export default function EditorPage() {
             
             {/* Background Opacity */}
             <div className="space-y-2">
-              <label className="ui-label">Opacité du fond: {Math.round(subtitleSettings.background_opacity * 100)}%</label>
+              <label className="ui-label">{t('opacity')}: {Math.round(subtitleSettings.background_opacity * 100)}%</label>
               <Slider
                 value={[subtitleSettings.background_opacity * 100]}
                 onValueChange={([v]) => setSubtitleSettings({ ...subtitleSettings, background_opacity: v / 100 })}
@@ -874,7 +874,7 @@ export default function EditorPage() {
             
             {/* Position */}
             <div className="space-y-2">
-              <label className="ui-label">Position</label>
+              <label className="ui-label">{t('position')}</label>
               <Select 
                 value={subtitleSettings.position} 
                 onValueChange={(v) => setSubtitleSettings({ ...subtitleSettings, position: v })}
