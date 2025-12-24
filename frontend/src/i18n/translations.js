@@ -514,11 +514,21 @@ const translations = {
     
     // Landing
     tagline: 'Trascrizione e traduzione video automatizzata',
-    subtitle: 'Trasforma i tuoi video con sottotitoli professionali in pochi clic',
+    heroTitle1: 'Trascrivi e Traduci',
+    heroTitle2: 'I Tuoi Video',
+    subtitle: 'Trasforma i tuoi video con trascrizione IA e sottotitoli professionali. Carica, trascrivi, traduci e esporta con facilità.',
     getStarted: 'Inizia',
+    dashboard: 'Pannello',
     privateAI: 'IA Privata',
     privateAIDesc: 'I tuoi dati rimangono confidenziali',
-    poweredBy: '100% Privato - Alimentato da Infomaniak AI',
+    poweredBy: '100% Privato',
+    poweredByDesc: 'Alimentato da Infomaniak AI, nessun dato viene inviato o analizzato esternamente.',
+    feature1Title: 'Trascrizione IA',
+    feature1Desc: 'Trascrizione automatica con Whisper',
+    feature2Title: 'Traduzione',
+    feature2Desc: 'Traduci in tutte le lingue',
+    feature3Title: 'Esportazione Video',
+    feature3Desc: 'Genera video con sottotitoli',
     
     // Pricing
     pricing: 'Prezzi',
