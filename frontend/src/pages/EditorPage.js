@@ -558,40 +558,42 @@ export default function EditorPage() {
             
             {/* Video Controls */}
             <div className="p-4 space-y-3 bg-white glass-card">
-              {/* Progress Bar - Click to seek */}
-              <div 
-                className="relative h-3 bg-slate-200 rounded-full cursor-pointer group"
-                onClick={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const percent = (e.clientX - rect.left) / rect.width;
-                  const videoDuration = duration || videoRef.current?.duration || 0;
-                  if (videoDuration > 0) {
-                    const newTime = percent * videoDuration;
-                    handleSeek(newTime);
-                  }
-                }}
-              >
-                {/* Progress fill */}
-                <div 
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all"
-                  style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
-                />
-                {/* Thumb */}
-                <div 
-                  className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-indigo-600 rounded-full shadow-lg transition-transform group-hover:scale-125"
-                  style={{ left: `calc(${duration > 0 ? (currentTime / duration) * 100 : 0}% - 8px)` }}
-                />
-                {/* Segment markers */}
-                {segments.map((seg, idx) => (
-                  <div
-                    key={idx}
-                    className={`absolute top-0 h-full ${activeSegmentIndex === idx ? 'bg-indigo-300/50' : 'bg-slate-300/30'}`}
-                    style={{
-                      left: `${duration > 0 ? (seg.start_time / duration) * 100 : 0}%`,
-                      width: `${duration > 0 ? ((seg.end_time - seg.start_time) / duration) * 100 : 0}%`
-                    }}
+              {/* Segment markers background */}
+              <div className="relative h-8">
+                {/* Segment markers - clickable areas */}
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-slate-100 rounded-full overflow-hidden">
+                  {segments.map((seg, idx) => (
+                    <div
+                      key={idx}
+                      className={`absolute top-0 h-full cursor-pointer transition-colors ${
+                        activeSegmentIndex === idx 
+                          ? 'bg-indigo-400/60' 
+                          : 'bg-slate-300/40 hover:bg-slate-400/40'
+                      }`}
+                      style={{
+                        left: `${duration > 0 ? (seg.start_time / duration) * 100 : 0}%`,
+                        width: `${duration > 0 ? Math.max(((seg.end_time - seg.start_time) / duration) * 100, 0.5) : 0}%`
+                      }}
+                      onClick={() => {
+                        handleSeek(seg.start_time);
+                        setActiveSegmentIndex(idx);
+                      }}
+                      title={`${formatTime(seg.start_time)} - ${formatTime(seg.end_time)}`}
+                    />
+                  ))}
+                </div>
+                
+                {/* Slider on top */}
+                <div className="relative z-10">
+                  <Slider
+                    value={[currentTime]}
+                    min={0}
+                    max={duration || 100}
+                    step={0.1}
+                    onValueChange={handleSliderChange}
+                    className="w-full cursor-pointer"
                   />
-                ))}
+                </div>
               </div>
               
               {/* Controls */}
@@ -613,6 +615,38 @@ export default function EditorPage() {
                 <span className="text-sm font-mono text-slate-500">
                   {formatTime(currentTime)} / {formatTime(duration)}
                 </span>
+                
+                {/* Skip buttons */}
+                <div className="flex gap-1 ml-auto">
+                  <button
+                    onClick={() => {
+                      const prevIndex = activeSegmentIndex !== null ? Math.max(0, activeSegmentIndex - 1) : 0;
+                      if (segments[prevIndex]) {
+                        handleSeek(segments[prevIndex].start_time);
+                        setActiveSegmentIndex(prevIndex);
+                      }
+                    }}
+                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 text-xs"
+                    title="Segment précédent"
+                  >
+                    ← Préc.
+                  </button>
+                  <button
+                    onClick={() => {
+                      const nextIndex = activeSegmentIndex !== null 
+                        ? Math.min(segments.length - 1, activeSegmentIndex + 1) 
+                        : 0;
+                      if (segments[nextIndex]) {
+                        handleSeek(segments[nextIndex].start_time);
+                        setActiveSegmentIndex(nextIndex);
+                      }
+                    }}
+                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 text-xs"
+                    title="Segment suivant"
+                  >
+                    Suiv. →
+                  </button>
+                </div>
               </div>
             </div>
           </div>
