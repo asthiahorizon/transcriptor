@@ -7,6 +7,7 @@ import {
   Upload, Loader2, Clock, Globe, Edit, Shield, Search
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import LanguageSelector from '../components/LanguageSelector';
 import {
   Dialog,
   DialogContent,
