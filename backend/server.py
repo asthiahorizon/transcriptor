@@ -1208,7 +1208,7 @@ async def download_video(video_id: str, user: dict = Depends(require_subscriptio
 # ============ FILE SERVING ============
 
 @api_router.get("/files/uploads/{filename}")
-async def serve_upload(filename: str, user: dict = Depends(get_current_user)):
+async def serve_upload(filename: str, request: Request, user: dict = Depends(get_user_from_token_or_query)):
     """Serve uploaded video files - requires authentication"""
     # First check if video exists and belongs to user
     video = await db.videos.find_one({"filename": filename})
@@ -1240,7 +1240,7 @@ async def serve_upload(filename: str, user: dict = Depends(get_current_user)):
     return FileResponse(str(file_path))
 
 @api_router.get("/files/outputs/{filename}")
-async def serve_output(filename: str, user: dict = Depends(get_current_user)):
+async def serve_output(filename: str, request: Request, user: dict = Depends(get_user_from_token_or_query)):
     """Serve generated output files - requires authentication"""
     file_path = OUTPUT_DIR / filename
     if not file_path.exists():
