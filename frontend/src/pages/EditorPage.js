@@ -557,11 +557,11 @@ export default function EditorPage() {
             </div>
             
             {/* Video Controls */}
-            <div className="p-4 space-y-3 bg-white glass-card">
-              {/* Segment markers background */}
-              <div className="relative h-8">
+            <div className="p-4 space-y-3 bg-white glass-card overflow-hidden">
+              {/* Slider container with proper containment */}
+              <div className="relative h-6 px-2">
                 {/* Segment markers - clickable areas */}
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   {segments.map((seg, idx) => (
                     <div
                       key={idx}
@@ -584,16 +584,14 @@ export default function EditorPage() {
                 </div>
                 
                 {/* Slider on top */}
-                <div className="relative z-10">
-                  <Slider
-                    value={[currentTime]}
-                    min={0}
-                    max={duration || 100}
-                    step={0.1}
-                    onValueChange={handleSliderChange}
-                    className="w-full cursor-pointer"
-                  />
-                </div>
+                <Slider
+                  value={[currentTime]}
+                  min={0}
+                  max={duration || 100}
+                  step={0.1}
+                  onValueChange={handleSliderChange}
+                  className="absolute inset-x-0 top-1/2 -translate-y-1/2"
+                />
               </div>
               
               {/* Controls */}
