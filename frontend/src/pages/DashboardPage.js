@@ -415,30 +415,30 @@ export default function DashboardPage() {
         <DialogContent className="bg-white border border-slate-200 shadow-xl rounded-2xl sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-slate-800">
-              Nouveau Projet
+              {t('newProject')}
             </DialogTitle>
             <DialogDescription className="text-slate-500">
-              Créez un nouveau projet de transcription vidéo
+              {t('newProjectDesc')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
-              <label className="ui-label">Nom du projet</label>
+              <label className="ui-label">{t('projectName')}</label>
               <input
                 type="text"
                 className="input w-full"
-                placeholder="Mon Projet Vidéo"
+                placeholder={t('projectPlaceholder')}
                 value={newProjectName}
                 onChange={(e) => setNewProjectName(e.target.value)}
               />
             </div>
             
             <div className="space-y-2">
-              <label className="ui-label">Description (optionnel)</label>
+              <label className="ui-label">{t('projectDescription')}</label>
               <textarea
                 className="input w-full h-24 resize-none"
-                placeholder="Décrivez votre projet..."
+                placeholder={t('descriptionPlaceholder')}
                 value={newProjectDesc}
                 onChange={(e) => setNewProjectDesc(e.target.value)}
               />
@@ -449,13 +449,13 @@ export default function DashboardPage() {
                 onClick={() => setShowNewProject(false)}
                 className="btn-ghost flex-1"
               >
-                Annuler
+                {t('cancel')}
               </button>
               <button
                 onClick={createProject}
                 className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-lg"
               >
-                Créer
+                {t('create')}
               </button>
             </div>
           </div>
@@ -467,30 +467,30 @@ export default function DashboardPage() {
         <DialogContent className="bg-white border border-slate-200 shadow-xl rounded-2xl sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-slate-800">
-              Modifier le Projet
+              {t('editProject')}
             </DialogTitle>
             <DialogDescription className="text-slate-500">
-              Modifiez les informations du projet
+              {t('editProjectDesc')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
-              <label className="ui-label">Nom du projet</label>
+              <label className="ui-label">{t('projectName')}</label>
               <input
                 type="text"
                 className="input w-full"
-                placeholder="Mon Projet Vidéo"
+                placeholder={t('projectPlaceholder')}
                 value={editProjectName}
                 onChange={(e) => setEditProjectName(e.target.value)}
               />
             </div>
             
             <div className="space-y-2">
-              <label className="ui-label">Description (optionnel)</label>
+              <label className="ui-label">{t('projectDescription')}</label>
               <textarea
                 className="input w-full h-24 resize-none"
-                placeholder="Décrivez votre projet..."
+                placeholder={t('descriptionPlaceholder')}
                 value={editProjectDesc}
                 onChange={(e) => setEditProjectDesc(e.target.value)}
               />
@@ -501,13 +501,13 @@ export default function DashboardPage() {
                 onClick={() => setShowEditProject(false)}
                 className="btn-ghost flex-1"
               >
-                Annuler
+                {t('cancel')}
               </button>
               <button
                 onClick={updateProject}
                 className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-lg"
               >
-                Enregistrer
+                {t('saveChanges')}
               </button>
             </div>
           </div>
@@ -519,10 +519,10 @@ export default function DashboardPage() {
         <DialogContent className="bg-white border border-slate-200 shadow-xl rounded-2xl sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-slate-800">
-              Uploader une vidéo
+              {t('uploadVideo')}
             </DialogTitle>
             <DialogDescription className="text-slate-500">
-              Ajouter une vidéo à {selectedProject?.name}
+              {t('addVideoTo')} {selectedProject?.name}
             </DialogDescription>
           </DialogHeader>
           
@@ -535,7 +535,7 @@ export default function DashboardPage() {
                   <Upload className="w-12 h-12 mx-auto mb-4 text-slate-300" />
                 )}
                 <p className="font-medium text-slate-700 mb-1">
-                  {uploading ? 'Upload en cours...' : 'Cliquez pour uploader'}
+                  {uploading ? t('uploadInProgress') : t('clickToUpload')}
                 </p>
                 <p className="text-sm text-slate-400">
                   MP4, MOV, AVI, MKV
