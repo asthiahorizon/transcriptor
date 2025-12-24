@@ -1208,7 +1208,7 @@ async def process_video_export(video_id: str, video: dict):
                     time_ms = int(line.split('=')[1])
                     duration_ms = video.get('duration', 0) * 1000000
                     if duration_ms > 0:
-                        progress = min(30 + int((time_ms / duration_ms) * 60), 90)
+                        progress = min(30 + int((time_ms / duration_ms) * 50), 80)
                         await db.videos.update_one({"id": video_id}, {"$set": {"progress": progress}})
                 except:
                     pass
@@ -1219,16 +1219,49 @@ async def process_video_export(video_id: str, video: dict):
             stderr = process.stderr.read()
             raise Exception(f"FFmpeg error: {stderr}")
         
+        await db.videos.update_one({"id": video_id}, {"$set": {"progress": 85}})
+        
+        # Upload to Supabase Storage
+        supabase_output_path = None
+        if supabase and Path(output_path).exists():
+            try:
+                output_filename = f"{video_id}_subtitled.mp4"
+                supabase_path = f"outputs/{output_filename}"
+                
+                with open(output_path, 'rb') as f:
+                    # Upload the subtitled video to Supabase
+                    response = supabase.storage.from_(SUPABASE_BUCKET).upload(
+                        supabase_path,
+                        f.read(),
+                        file_options={"content-type": "video/mp4", "upsert": "true"}
+                    )
+                    
+                supabase_output_path = supabase_path
+                logger.info(f"Subtitled video uploaded to Supabase: {supabase_path}")
+                
+                # Clean up local output file after successful upload
+                Path(output_path).unlink(missing_ok=True)
+                
+            except Exception as e:
+                logger.error(f"Failed to upload output to Supabase: {e}")
+                # Keep local file as fallback
+                supabase_output_path = None
+        
         await db.videos.update_one(
             {"id": video_id},
             {"$set": {
                 "status": "completed",
                 "progress": 100,
-                "output_path": output_path,
+                "output_path": output_path if not supabase_output_path else None,
                 "output_filename": f"{video_id}_subtitled.mp4",
+                "output_supabase_path": supabase_output_path,
+                "output_storage_type": "supabase" if supabase_output_path else "local",
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }}
         )
+        
+        # Clean up SRT file
+        Path(srt_path).unlink(missing_ok=True)
         
         logger.info(f"Video export completed for {video_id}")
         
