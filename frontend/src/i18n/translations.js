@@ -44,6 +44,7 @@ const translations = {
     download: 'Télécharger',
     save: 'Sauvegarder',
     settings: 'Paramètres',
+    original: 'Original',
     originalText: 'Texte original',
     translation: 'Traduction',
     enterTranslation: 'Entrez la traduction...',
@@ -66,6 +67,15 @@ const translations = {
     transcribing: 'Transcription en cours...',
     translating: 'Traduction en cours...',
     generating: 'Génération en cours...',
+    readyToTranscribe: 'Prêt à transcrire',
+    transcribed: 'Transcrit',
+    translated: 'Traduit',
+    ready: 'Prêt',
+    prevSegment: '← Préc.',
+    nextSegment: 'Suiv. →',
+    videoFile: 'Fichier',
+    project: 'Projet',
+    source: 'Source',
     
     // Landing
     tagline: 'Transcription et traduction vidéo automatisée',
