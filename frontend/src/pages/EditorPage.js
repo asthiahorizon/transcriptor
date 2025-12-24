@@ -452,14 +452,14 @@ export default function EditorPage() {
               <ArrowLeft className="w-5 h-5 text-slate-600" />
             </button>
             <div>
-              <h1 className="font-semibold text-slate-800 truncate max-w-md">{video?.original_filename}</h1>
+              <h1 className="font-semibold text-slate-800 truncate max-w-md">{project?.name || video?.original_filename}</h1>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
                 <span className={`inline-flex items-center gap-2 px-2 py-0.5 rounded-full text-xs font-medium ${statusInfo.bg} ${statusInfo.color}`}>
                   {isProcessing && <Loader2 className="w-3 h-3 animate-spin" />}
                   {statusInfo.label}
                 </span>
-                {video?.source_language && <LanguageBadge code={video.source_language} type="source" label="Source" />}
-                {video?.target_language && <LanguageBadge code={video.target_language} type="target" label="Traduction" />}
+                {video?.source_language && <LanguageBadge code={video.source_language} type="source" label={t('source')} />}
+                {video?.target_language && <LanguageBadge code={video.target_language} type="target" label={t('translation')} />}
               </div>
             </div>
           </div>
@@ -472,7 +472,7 @@ export default function EditorPage() {
               className="btn-ghost py-2 px-4 flex items-center gap-2"
             >
               <Settings className="w-4 h-4" />
-              Paramètres
+              {t('settings')}
             </button>
             
             <button
@@ -485,7 +485,7 @@ export default function EditorPage() {
               }`}
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              {hasLocalChanges ? 'Sauvegarder *' : 'Sauvegarder'}
+              {hasLocalChanges ? `${t('save')} *` : t('save')}
             </button>
           </div>
         </div>
