@@ -711,7 +711,7 @@ async def upload_video(
 
 async def get_video_duration(video_id: str, file_path: str):
     try:
-        cmd = ['/usr/bin/ffprobe', '-v', 'quiet', '-show_entries', 'format=duration', '-of', 'json', file_path]
+        cmd = [FFPROBE_PATH, '-v', 'quiet', '-show_entries', 'format=duration', '-of', 'json', file_path]
         result = subprocess.run(cmd, capture_output=True, text=True)
         data = json.loads(result.stdout)
         duration = float(data['format']['duration'])
