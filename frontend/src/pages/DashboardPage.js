@@ -235,12 +235,12 @@ export default function DashboardPage() {
                 className="flex items-center gap-2 text-purple-600 hover:text-purple-700 transition-colors"
               >
                 <Shield className="w-5 h-5" />
-                Admin
+                {t('admin')}
               </button>
             )}
             <LanguageSelector />
             <span className="text-slate-500">
-              Bonjour, <span className="text-slate-700 font-medium">{user?.name}</span>
+              {t('hello')}, <span className="text-slate-700 font-medium">{user?.name}</span>
             </span>
             <button
               onClick={logout}
@@ -248,7 +248,7 @@ export default function DashboardPage() {
               data-testid="logout-btn"
             >
               <LogOut className="w-5 h-5" />
-              Déconnexion
+              {t('logout')}
             </button>
           </div>
         </div>
