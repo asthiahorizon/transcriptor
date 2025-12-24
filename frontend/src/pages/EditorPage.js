@@ -760,7 +760,7 @@ export default function EditorPage() {
                   
                   {/* Original Text */}
                   <div className="mb-3">
-                    <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">Original</label>
+                    <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">{t('original')}</label>
                     <p className="text-sm text-slate-600 mt-1 leading-relaxed">
                       {segment.original_text}
                     </p>
@@ -768,7 +768,7 @@ export default function EditorPage() {
                   
                   {/* Translated Text */}
                   <div>
-                    <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">Traduction</label>
+                    <label className="text-xs font-medium text-slate-400 uppercase tracking-wide">{t('translation')}</label>
                     <textarea
                       value={segment.translated_text || ''}
                       onChange={(e) => {
@@ -782,7 +782,7 @@ export default function EditorPage() {
                       onBlur={() => setIsEditing(false)}
                       className="w-full mt-1 p-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 resize-none focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 overflow-hidden"
                       rows={1}
-                      placeholder="Entrez la traduction..."
+                      placeholder={t('enterTranslation')}
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
@@ -795,7 +795,7 @@ export default function EditorPage() {
 
       {/* Footer */}
       <footer className="relative z-10 px-8 py-4 text-center">
-        <p className="text-sm text-slate-400">© 2024 Asthia Horizon Sàrl</p>
+        <p className="text-sm text-slate-400">{t('copyright')}</p>
       </footer>
 
       {/* Settings Dialog */}
@@ -803,7 +803,7 @@ export default function EditorPage() {
         <DialogContent className="bg-white border border-slate-200 shadow-xl rounded-2xl sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-slate-800">
-              Paramètres des sous-titres
+              {t('subtitleSettings')}
             </DialogTitle>
           </DialogHeader>
           
