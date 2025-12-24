@@ -30,13 +30,14 @@ db = client[os.environ['DB_NAME']]
 
 # Supabase Config
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
-SUPABASE_KEY = os.environ.get('SUPABASE_ANON_KEY')
+SUPABASE_KEY = os.environ.get('SUPABASE_SERVICE_KEY')  # Use service key for server-side operations
 SUPABASE_BUCKET = 'videos'
 
-# Initialize Supabase client
+# Initialize Supabase client with service key
 supabase: Client = None
 if SUPABASE_URL and SUPABASE_KEY:
     supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+    logger.info("Supabase client initialized with service key")
 
 # JWT Config
 JWT_SECRET = os.environ.get('JWT_SECRET', 'transcriptoria-secret-key-2024')
