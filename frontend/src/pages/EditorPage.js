@@ -508,13 +508,34 @@ export default function EditorPage() {
             {/* Video Controls */}
             <div className="p-4 space-y-3 bg-white">
               {/* Progress Bar */}
-              <div 
-                className="h-2 bg-slate-200 rounded-full cursor-pointer overflow-hidden"
-                onClick={handleProgressClick}
-              >
-                <div 
-                  className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-100"
-                  style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
+              <div className="relative group">
+                <input
+                  type="range"
+                  min="0"
+                  max={duration || videoRef.current?.duration || 100}
+                  step="0.1"
+                  value={currentTime}
+                  onChange={(e) => handleSeek(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer
+                    [&::-webkit-slider-thumb]:appearance-none
+                    [&::-webkit-slider-thumb]:w-4
+                    [&::-webkit-slider-thumb]:h-4
+                    [&::-webkit-slider-thumb]:bg-indigo-500
+                    [&::-webkit-slider-thumb]:rounded-full
+                    [&::-webkit-slider-thumb]:shadow-lg
+                    [&::-webkit-slider-thumb]:cursor-pointer
+                    [&::-webkit-slider-thumb]:transition-transform
+                    [&::-webkit-slider-thumb]:hover:scale-125
+                    [&::-moz-range-thumb]:w-4
+                    [&::-moz-range-thumb]:h-4
+                    [&::-moz-range-thumb]:bg-indigo-500
+                    [&::-moz-range-thumb]:rounded-full
+                    [&::-moz-range-thumb]:border-0
+                    [&::-moz-range-thumb]:shadow-lg
+                    [&::-moz-range-thumb]:cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, #6366f1 0%, #6366f1 ${(currentTime / (duration || 1)) * 100}%, #e2e8f0 ${(currentTime / (duration || 1)) * 100}%, #e2e8f0 100%)`
+                  }}
                 />
               </div>
               
