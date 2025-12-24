@@ -56,6 +56,7 @@ export default function DashboardPage() {
   const [editProjectName, setEditProjectName] = useState('');
   const [editProjectDesc, setEditProjectDesc] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [projectVideos, setProjectVideos] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
 
