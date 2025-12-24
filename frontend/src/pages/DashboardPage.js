@@ -159,11 +159,19 @@ export default function DashboardPage() {
     formData.append('file', file);
 
     setUploading(true);
+    setUploadProgress(0);
+    
     try {
       const response = await axios.post(
         `${API}/projects/${selectedProject.id}/videos`,
         formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
+        { 
+          headers: { 'Content-Type': 'multipart/form-data' },
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(percent);
+          }
+        }
       );
       
       setProjectVideos(prev => ({
@@ -172,12 +180,14 @@ export default function DashboardPage() {
       }));
       
       setShowUpload(false);
+      setUploadProgress(0);
       toast.success(t('videoUploaded'));
       navigate(`/editor/${response.data.id}`);
     } catch (error) {
       toast.error(t('errorUploading'));
     } finally {
       setUploading(false);
+      setUploadProgress(0);
     }
   };
 
