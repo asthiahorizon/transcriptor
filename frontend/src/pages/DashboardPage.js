@@ -407,7 +407,7 @@ export default function DashboardPage() {
 
       {/* Footer */}
       <footer className="relative z-10 px-8 py-4 text-center">
-        <p className="text-sm text-slate-400">© 2024 Asthia Horizon Sàrl</p>
+        <p className="text-sm text-slate-400">{t('copyright')}</p>
       </footer>
 
       {/* New Project Dialog */}
