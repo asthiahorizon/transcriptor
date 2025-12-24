@@ -688,7 +688,7 @@ async def upload_video(
     }
     await db.videos.insert_one(video)
     
-    background_tasks.add_task(get_video_duration, video_id, str(file_path))
+    background_tasks.add_task(get_video_duration, video_id, str(local_path))
     
     return VideoResponse(
         id=video_id,
