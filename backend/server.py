@@ -62,6 +62,10 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 OUTPUT_DIR = ROOT_DIR / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
+# FFmpeg paths - check local bin folder first, then system path
+FFMPEG_PATH = str(ROOT_DIR / "bin" / "ffmpeg") if (ROOT_DIR / "bin" / "ffmpeg").exists() else "/usr/bin/ffmpeg"
+FFPROBE_PATH = str(ROOT_DIR / "bin" / "ffprobe") if (ROOT_DIR / "bin" / "ffprobe").exists() else "/usr/bin/ffprobe"
+
 # Create the main app
 app = FastAPI(title="Transcriptor API")
 
