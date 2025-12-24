@@ -217,9 +217,6 @@ def has_access(user: dict) -> bool:
 def is_subscribed(user: dict) -> bool:
     """Legacy function - returns True if user has any form of access"""
     return has_access(user)
-        return end_date > datetime.now(timezone.utc)
-    except:
-        return False
 
 async def require_subscription(user: dict = Depends(get_current_user)) -> dict:
     if not is_subscribed(user):
