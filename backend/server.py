@@ -83,6 +83,7 @@ class UserListResponse(BaseModel):
     email: str
     name: str
     is_admin: bool
+    is_vip: bool = False
     is_subscribed: bool
     subscription_end: Optional[str]
     created_at: str
