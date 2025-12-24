@@ -571,11 +571,11 @@ export default function EditorPage() {
             </div>
             
             {/* Video Controls */}
-            <div className="p-4 space-y-3 bg-white glass-card overflow-hidden">
+            <div className="p-4 space-y-3 bg-white glass-card">
               {/* Slider container with proper containment */}
-              <div className="relative h-6 px-2">
+              <div className="relative h-6 mx-2">
                 {/* Segment markers - clickable areas */}
-                <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   {segments.map((seg, idx) => (
                     <div
                       key={idx}
@@ -639,9 +639,8 @@ export default function EditorPage() {
                       }
                     }}
                     className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 text-xs"
-                    title="Segment précédent"
                   >
-                    ← Préc.
+                    {t('prevSegment')}
                   </button>
                   <button
                     onClick={() => {
@@ -654,9 +653,8 @@ export default function EditorPage() {
                       }
                     }}
                     className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500 text-xs"
-                    title="Segment suivant"
                   >
-                    Suiv. →
+                    {t('nextSegment')}
                   </button>
                 </div>
               </div>
@@ -671,7 +669,7 @@ export default function EditorPage() {
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold flex items-center gap-2 flex-1 justify-center py-4 rounded-xl shadow-lg"
               >
                 <Sparkles className="w-5 h-5" />
-                Transcrire la vidéo
+                {t('transcribe')}
               </button>
             )}
             
