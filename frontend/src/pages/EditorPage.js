@@ -309,7 +309,27 @@ export default function EditorPage() {
       const activeIndex = segments.findIndex(
         seg => time >= seg.start_time && time < seg.end_time
       );
-      setActiveSegmentIndex(activeIndex >= 0 ? activeIndex : null);
+      
+      if (activeIndex >= 0 && activeIndex !== activeSegmentIndex) {
+        setActiveSegmentIndex(activeIndex);
+        
+        // Scroll segment into view within the container
+        if (segmentRefs.current[activeIndex]) {
+          const container = document.getElementById('segments-container');
+          const segment = segmentRefs.current[activeIndex];
+          if (container && segment) {
+            const containerRect = container.getBoundingClientRect();
+            const segmentRect = segment.getBoundingClientRect();
+            
+            // Check if segment is outside visible area
+            if (segmentRect.top < containerRect.top || segmentRect.bottom > containerRect.bottom) {
+              segment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }
+        }
+      } else if (activeIndex < 0) {
+        setActiveSegmentIndex(null);
+      }
     }
   };
 
