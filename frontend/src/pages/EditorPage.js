@@ -21,6 +21,7 @@ import {
 } from '../components/ui/dialog';
 import { Slider } from '../components/ui/slider';
 import { Progress } from '../components/ui/progress';
+import LanguageSelector from '../components/LanguageSelector';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
