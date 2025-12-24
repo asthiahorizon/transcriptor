@@ -399,14 +399,14 @@ export default function EditorPage() {
 
   const getStatusInfo = (status) => {
     const statusInfo = {
-      uploaded: { color: 'text-slate-500', bg: 'bg-slate-100', label: 'Prêt à transcrire' },
-      transcribing: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Transcription...' },
-      transcribed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Transcrit' },
-      translating: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Traduction...' },
-      translated: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Traduit' },
-      rendering: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Génération...' },
-      completed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'Prêt' },
-      error: { color: 'text-red-600', bg: 'bg-red-100', label: 'Erreur' }
+      uploaded: { color: 'text-slate-500', bg: 'bg-slate-100', label: t('readyToTranscribe') },
+      transcribing: { color: 'text-purple-600', bg: 'bg-purple-100', label: t('transcribing') },
+      transcribed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: t('transcribed') },
+      translating: { color: 'text-purple-600', bg: 'bg-purple-100', label: t('translating') },
+      translated: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: t('translated') },
+      rendering: { color: 'text-purple-600', bg: 'bg-purple-100', label: t('generating') },
+      completed: { color: 'text-emerald-600', bg: 'bg-emerald-100', label: t('ready') },
+      error: { color: 'text-red-600', bg: 'bg-red-100', label: t('error') }
     };
     return statusInfo[status] || statusInfo.uploaded;
   };
