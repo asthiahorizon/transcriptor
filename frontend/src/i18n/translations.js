@@ -282,11 +282,21 @@ const translations = {
     
     // Landing
     tagline: 'Automatisierte Video-Transkription und Übersetzung',
-    subtitle: 'Verwandeln Sie Ihre Videos mit professionellen Untertiteln in wenigen Klicks',
+    heroTitle1: 'Transkribieren & Übersetzen',
+    heroTitle2: 'Ihre Videos',
+    subtitle: 'Verwandeln Sie Ihre Videos mit KI-Transkription und professionellen Untertiteln. Hochladen, transkribieren, übersetzen und exportieren.',
     getStarted: 'Loslegen',
+    dashboard: 'Dashboard',
     privateAI: 'Private KI',
     privateAIDesc: 'Ihre Daten bleiben vertraulich',
-    poweredBy: '100% Privat - Betrieben von Infomaniak AI',
+    poweredBy: '100% Privat',
+    poweredByDesc: 'Betrieben von Infomaniak AI, keine Daten werden extern gesendet oder analysiert.',
+    feature1Title: 'KI-Transkription',
+    feature1Desc: 'Automatische Transkription mit Whisper',
+    feature2Title: 'Übersetzung',
+    feature2Desc: 'Übersetzen in alle Sprachen',
+    feature3Title: 'Video-Export',
+    feature3Desc: 'Generieren Sie Videos mit Untertiteln',
     
     // Pricing
     pricing: 'Preise',
