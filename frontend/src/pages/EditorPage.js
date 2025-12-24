@@ -161,36 +161,31 @@ export default function EditorPage() {
   const [saving, setSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [hasLocalChanges, setHasLocalChanges] = useState(false);
+  const [hasSettingsChanges, setHasSettingsChanges] = useState(false);
 
   useEffect(() => {
     fetchVideo();
     const interval = setInterval(() => {
       // Only fetch if not editing and no local changes
-      if (!isEditing && !hasLocalChanges) {
+      if (!isEditing && !hasLocalChanges && !hasSettingsChanges) {
         fetchVideo();
       }
     }, 2000);
     return () => clearInterval(interval);
-  }, [videoId, isEditing, hasLocalChanges]);
+  }, [videoId, isEditing, hasLocalChanges, hasSettingsChanges]);
 
   useEffect(() => {
     // Only update segments from server if no local changes
     if (video?.segments && !hasLocalChanges) {
       setSegments(video.segments);
     }
-    if (video?.subtitle_settings) {
+    // Only update settings if no settings changes
+    if (video?.subtitle_settings && !hasSettingsChanges) {
       setSubtitleSettings(video.subtitle_settings);
     }
-  }, [video, hasLocalChanges]);
+  }, [video, hasLocalChanges, hasSettingsChanges]);
 
-  useEffect(() => {
-    if (activeSegmentIndex !== null && segmentRefs.current[activeSegmentIndex]) {
-      segmentRefs.current[activeSegmentIndex].scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-    }
-  }, [activeSegmentIndex]);
+  // Removed auto-scroll - we want video and segment side by side
 
   const fetchVideo = async () => {
     try {
