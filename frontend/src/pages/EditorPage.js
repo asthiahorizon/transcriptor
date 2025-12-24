@@ -467,17 +467,18 @@ export default function EditorPage() {
         </div>
       )}
 
-      {/* Main Content */}
-      <div className="flex gap-6 p-6 max-w-7xl mx-auto">
-        {/* Left: Video Player */}
-        <div className="flex-1 space-y-4">
-          {/* Video Container */}
-          <div className="glass-card overflow-hidden">
-            <div className="relative bg-slate-900 aspect-video flex items-center justify-center">
-              <video
-                ref={videoRef}
-                src={videoUrl}
-                className="max-w-full max-h-full"
+      {/* Main Content - Side by Side Layout */}
+      <div className="flex gap-6 p-6 max-w-7xl mx-auto h-[calc(100vh-180px)]">
+        {/* Left: Video Player - Sticky */}
+        <div className="w-1/2 flex flex-col">
+          <div className="sticky top-24 space-y-4">
+            {/* Video Container */}
+            <div className="glass-card overflow-hidden">
+              <div className="relative bg-slate-900 aspect-video flex items-center justify-center">
+                <video
+                  ref={videoRef}
+                  src={videoUrl}
+                  className="max-w-full max-h-full"
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={(e) => setDuration(e.target.duration)}
                 onEnded={() => setIsPlaying(false)}
