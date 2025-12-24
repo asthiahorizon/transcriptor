@@ -271,6 +271,20 @@ export default function DashboardPage() {
           </button>
         </div>
 
+        {/* Search */}
+        <div className="glass-card p-4 mb-6">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Rechercher un projet..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+        </div>
+
         {/* Projects Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -290,7 +304,9 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project, index) => (
+            {projects
+              .filter(p => p.name?.toLowerCase().includes(searchTerm.toLowerCase()) || p.description?.toLowerCase().includes(searchTerm.toLowerCase()))
+              .map((project, index) => (
               <div
                 key={project.id}
                 className="glass-card p-6 group relative animate-fade-in"
