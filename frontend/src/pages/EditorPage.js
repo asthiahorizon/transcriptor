@@ -442,6 +442,8 @@ export default function EditorPage() {
           </div>
           
           <div className="flex items-center gap-3">
+            <LanguageSelector />
+            
             <button
               onClick={() => setShowSettings(true)}
               className="btn-ghost py-2 px-4 flex items-center gap-2"
