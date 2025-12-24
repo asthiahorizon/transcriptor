@@ -58,7 +58,7 @@ export default function PricingPage() {
             <Subtitles className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-            TranscriptorIA
+            Transcriptor
           </span>
         </div>
         
@@ -86,7 +86,7 @@ export default function PricingPage() {
               </div>
 
               <h2 className="text-2xl font-bold text-slate-800 mb-2">Pro</h2>
-              <p className="text-slate-500 mb-6">Accès complet à TranscriptorIA</p>
+              <p className="text-slate-500 mb-6">Accès complet à Transcriptor</p>
 
               <div className="flex items-baseline gap-2 mb-8">
                 <span className="text-5xl font-extrabold text-slate-800">10</span>
@@ -105,7 +105,7 @@ export default function PricingPage() {
                   <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
                     <Check className="w-3 h-3 text-emerald-600" />
                   </div>
-                  <span className="text-slate-700">Traduction dans 12+ langues</span>
+                  <span className="text-slate-700">Traduction dans toutes les langues</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">

@@ -28,7 +28,7 @@ export default function LandingPage() {
             <Subtitles className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-            TranscriptorIA
+            Transcriptor
           </span>
         </div>
         
@@ -146,7 +146,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
               <Subtitles className="w-4 h-4 text-white" />
             </div>
-            <span className="font-semibold text-slate-700">TranscriptorIA</span>
+            <span className="font-semibold text-slate-700">Transcriptor</span>
           </div>
           <p className="text-sm text-slate-500">
             © 2024 Asthia Horizon Sàrl. Tous droits réservés.

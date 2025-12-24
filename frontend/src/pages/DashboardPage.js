@@ -220,7 +220,7 @@ export default function DashboardPage() {
               <Subtitles className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              TranscriptorIA
+              Transcriptor
             </span>
           </div>
           

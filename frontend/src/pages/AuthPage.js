@@ -65,7 +65,7 @@ export default function AuthPage() {
             <Subtitles className="w-6 h-6 text-white" />
           </div>
           <span className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-            TranscriptorIA
+            Transcriptor
           </span>
         </div>
 
