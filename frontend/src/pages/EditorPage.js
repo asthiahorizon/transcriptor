@@ -670,7 +670,6 @@ export default function EditorPage() {
             )}
           </div>
         </div>
-      </div>
 
         {/* Right: Segments Editor - Scrollable with active segment highlighted */}
         <div className="w-1/2 flex flex-col glass-card overflow-hidden">
