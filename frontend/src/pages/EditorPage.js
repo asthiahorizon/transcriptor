@@ -276,10 +276,16 @@ export default function EditorPage() {
     try {
       await axios.put(`${API}/videos/${videoId}/settings`, subtitleSettings);
       toast.success('Paramètres sauvegardés !');
+      setHasSettingsChanges(false);
       setShowSettings(false);
     } catch (error) {
       toast.error('Erreur lors de la sauvegarde des paramètres');
     }
+  };
+
+  const updateSubtitleSetting = (field, value) => {
+    setSubtitleSettings(prev => ({ ...prev, [field]: value }));
+    setHasSettingsChanges(true);
   };
 
   const updateSegment = (index, field, value) => {
