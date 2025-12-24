@@ -20,6 +20,7 @@ backend:
   phases:
     preBuild:
       commands:
+        - yum install -y ffmpeg || apt-get update && apt-get install -y ffmpeg
         - cd backend
         - pip install -r requirements.txt
     build:
