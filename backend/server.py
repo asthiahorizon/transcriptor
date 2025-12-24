@@ -997,7 +997,6 @@ async def process_transcription(video_id: str, file_path: str):
                     
                     for i, word in enumerate(words):
                         word_len = len(word) + 1  # +1 for space
-                        word_time = i * time_per_word
                         
                         # Check if adding this word would exceed limits
                         chunk_duration = len(current_chunk) * time_per_word
