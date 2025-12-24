@@ -141,8 +141,10 @@ export default function EditorPage() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
   const segmentRefs = useRef({});
+  const { t } = useLanguage();
   
   const [video, setVideo] = useState(null);
+  const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
