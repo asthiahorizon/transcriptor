@@ -396,7 +396,7 @@ export default function DashboardPage() {
                     data-testid={`upload-video-${project.id}`}
                   >
                     <Upload className="w-4 h-4" />
-                    Uploader
+                    {t('upload')}
                   </button>
                 </div>
               </div>
