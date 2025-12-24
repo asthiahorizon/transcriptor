@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Subtitles, Mail, Lock, User, ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../i18n/LanguageContext';
+import LanguageSelector from '../components/LanguageSelector';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,6 +17,7 @@ export default function AuthPage() {
   
   const navigate = useNavigate();
   const { login, register } = useAuth();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,19 +26,19 @@ export default function AuthPage() {
     try {
       if (isLogin) {
         await login(formData.email, formData.password);
-        toast.success('Bienvenue !');
+        toast.success(t('hello') + ' !');
       } else {
         if (!formData.name.trim()) {
-          toast.error('Veuillez entrer votre nom');
+          toast.error(t('error'));
           setLoading(false);
           return;
         }
         await register(formData.email, formData.password, formData.name);
-        toast.success('Compte créé avec succès !');
+        toast.success(t('success') + ' !');
       }
       navigate('/dashboard');
     } catch (error) {
-      const message = error.response?.data?.detail || 'Une erreur est survenue';
+      const message = error.response?.data?.detail || t('error');
       toast.error(message);
     } finally {
       setLoading(false);
@@ -44,6 +47,11 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Language Selector */}
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageSelector />
+      </div>
+      
       {/* Background Decorations */}
       <div className="absolute top-20 left-20 w-72 h-72 bg-purple-300/30 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-300/30 rounded-full blur-3xl" />
