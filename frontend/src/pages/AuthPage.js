@@ -150,20 +150,20 @@ export default function AuthPage() {
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              isLogin ? 'Se connecter' : 'Créer le compte'
+              isLogin ? t('loginButton') : t('registerButton')
             )}
           </button>
         </form>
 
         {/* Toggle */}
         <p className="text-center text-slate-500 mt-6">
-          {isLogin ? "Pas encore de compte ? " : "Déjà un compte ? "}
+          {isLogin ? t('noAccount') + ' ' : t('hasAccount') + ' '}
           <button
             onClick={() => setIsLogin(!isLogin)}
             className="text-indigo-600 hover:text-indigo-700 font-medium"
             data-testid="toggle-auth-btn"
           >
-            {isLogin ? "S'inscrire" : 'Se connecter'}
+            {isLogin ? t('registerButton') : t('loginButton')}
           </button>
         </p>
       </div>
