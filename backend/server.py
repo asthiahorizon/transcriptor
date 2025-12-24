@@ -715,50 +715,108 @@ async def transcribe_video(video_id: str, background_tasks: BackgroundTasks, use
     return {"message": "Transcription started", "status": "transcribing"}
 
 async def process_transcription(video_id: str, file_path: str):
+    """Process video transcription using Infomaniak AI API"""
     try:
-        from emergentintegrations.llm.openai import OpenAISpeechToText
-        
-        api_key = os.environ.get('EMERGENT_LLM_KEY')
-        if not api_key:
-            raise ValueError("EMERGENT_LLM_KEY not configured")
+        if not INFOMANIAK_API_KEY:
+            raise ValueError("INFOMANIAK_API_KEY not configured")
         
         # Update progress
         await db.videos.update_one({"id": video_id}, {"$set": {"progress": 10}})
-        
-        stt = OpenAISpeechToText(api_key=api_key)
         
         # Extract audio from video
         audio_path = file_path.rsplit('.', 1)[0] + '.mp3'
         cmd = ['/usr/bin/ffmpeg', '-y', '-i', file_path, '-vn', '-acodec', 'libmp3lame', '-q:a', '4', audio_path]
         subprocess.run(cmd, capture_output=True, check=True)
         
-        await db.videos.update_one({"id": video_id}, {"$set": {"progress": 30}})
+        await db.videos.update_one({"id": video_id}, {"$set": {"progress": 20}})
         
-        # Transcribe with timestamps
-        with open(audio_path, 'rb') as audio_file:
-            response = await stt.transcribe(
-                file=audio_file,
-                model="whisper-1",
-                response_format="verbose_json",
-                timestamp_granularities=["segment"]
-            )
-        
-        await db.videos.update_one({"id": video_id}, {"$set": {"progress": 80}})
-        
-        # Process segments
-        segments = []
-        response_segments = getattr(response, 'segments', None)
-        if response_segments:
-            for seg in response_segments:
-                if isinstance(seg, dict):
-                    start = seg.get('start', 0)
-                    end = seg.get('end', 0)
-                    text = seg.get('text', '').strip()
-                else:
-                    start = getattr(seg, 'start', 0)
-                    end = getattr(seg, 'end', 0)
-                    text = getattr(seg, 'text', '').strip()
+        # Submit transcription to Infomaniak
+        async with httpx.AsyncClient(timeout=300.0) as client:
+            headers = {
+                "Authorization": f"Bearer {INFOMANIAK_API_KEY}"
+            }
+            
+            # Read audio file
+            with open(audio_path, 'rb') as f:
+                files = {
+                    'file': (Path(audio_path).name, f, 'audio/mpeg'),
+                }
+                data = {
+                    'model': 'whisper',
+                    'response_format': 'verbose_json',
+                    'timestamp_granularities[]': 'segment'
+                }
                 
+                # Submit transcription request
+                response = await client.post(
+                    f"{INFOMANIAK_API_BASE}/openai/audio/transcriptions",
+                    headers=headers,
+                    files=files,
+                    data=data
+                )
+                
+                if response.status_code != 200:
+                    raise Exception(f"Infomaniak API error: {response.text}")
+                
+                result = response.json()
+                batch_id = result.get('batch_id')
+                
+                if not batch_id:
+                    raise Exception("No batch_id returned from Infomaniak")
+        
+        await db.videos.update_one({"id": video_id}, {"$set": {"progress": 40}})
+        logger.info(f"Transcription submitted for video {video_id}, batch_id: {batch_id}")
+        
+        # Poll for results
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            headers = {"Authorization": f"Bearer {INFOMANIAK_API_KEY}"}
+            max_attempts = 60  # 5 minutes max
+            
+            for attempt in range(max_attempts):
+                await asyncio.sleep(5)  # Wait 5 seconds between polls
+                
+                # Check status
+                status_response = await client.get(
+                    f"{INFOMANIAK_API_BASE}/results/{batch_id}",
+                    headers=headers
+                )
+                
+                if status_response.status_code != 200:
+                    continue
+                
+                status_data = status_response.json()
+                status = status_data.get('data', {}).get('status', '')
+                
+                progress = min(40 + (attempt * 1), 80)
+                await db.videos.update_one({"id": video_id}, {"$set": {"progress": progress}})
+                
+                if status == 'done':
+                    # Download results
+                    download_response = await client.get(
+                        f"{INFOMANIAK_API_BASE}/results/{batch_id}/download",
+                        headers=headers
+                    )
+                    
+                    if download_response.status_code == 200:
+                        transcription_result = download_response.json()
+                        break
+                elif status == 'error':
+                    raise Exception(f"Transcription failed: {status_data}")
+            else:
+                raise Exception("Transcription timed out")
+        
+        await db.videos.update_one({"id": video_id}, {"$set": {"progress": 85}})
+        
+        # Process segments from Infomaniak response
+        segments = []
+        response_segments = transcription_result.get('segments', [])
+        
+        for seg in response_segments:
+            start = seg.get('start', 0)
+            end = seg.get('end', 0)
+            text = seg.get('text', '').strip()
+            
+            if text:
                 segments.append({
                     "id": str(uuid.uuid4()),
                     "start_time": start,
@@ -767,7 +825,7 @@ async def process_transcription(video_id: str, file_path: str):
                     "translated_text": ""
                 })
         
-        source_language = getattr(response, 'language', 'en')
+        source_language = transcription_result.get('language', 'en')
         
         await db.videos.update_one(
             {"id": video_id},
