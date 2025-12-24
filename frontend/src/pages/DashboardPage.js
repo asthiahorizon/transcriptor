@@ -297,13 +297,13 @@ export default function DashboardPage() {
         ) : projects.length === 0 ? (
           <div className="text-center py-20 glass-card p-12">
             <FolderOpen className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-slate-700 mb-2">Aucun projet</h3>
-            <p className="text-slate-500 mb-6">Créez votre premier projet pour commencer</p>
+            <h3 className="text-xl font-bold text-slate-700 mb-2">{t('noProjects')}</h3>
+            <p className="text-slate-500 mb-6">{t('createFirstProject')}</p>
             <button
               onClick={() => setShowNewProject(true)}
               className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold px-5 py-3 rounded-xl shadow-lg"
             >
-              Créer un projet
+              {t('createProject')}
             </button>
           </div>
         ) : (
