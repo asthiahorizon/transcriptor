@@ -623,11 +623,12 @@ export default function EditorPage() {
               </>
             )}
           </div>
+          </div>
         </div>
 
-        {/* Right: Segments Editor */}
-        <div className="w-[420px] flex flex-col glass-card overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 bg-white/50">
+        {/* Right: Segments Editor - Scrollable with active segment highlighted */}
+        <div className="w-1/2 flex flex-col glass-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 bg-white/50 flex-shrink-0">
             <h2 className="font-bold text-lg text-slate-800">
               Sous-titres
             </h2>
@@ -636,7 +637,7 @@ export default function EditorPage() {
             </p>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3" id="segments-container">
             {segments.length === 0 ? (
               <div className="text-center py-12 text-slate-400">
                 <Sparkles className="w-12 h-12 mx-auto mb-4 text-slate-300" />
@@ -648,7 +649,7 @@ export default function EditorPage() {
                 <div
                   key={segment.id}
                   ref={el => segmentRefs.current[index] = el}
-                  className={`segment-card p-4 cursor-pointer ${activeSegmentIndex === index ? 'active' : ''}`}
+                  className={`segment-card p-4 cursor-pointer transition-all ${activeSegmentIndex === index ? 'active ring-2 ring-indigo-500 shadow-lg' : ''}`}
                   onClick={() => {
                     handleSeek(segment.start_time);
                     setActiveSegmentIndex(index);
