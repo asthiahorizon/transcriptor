@@ -879,40 +879,80 @@ async def translate_subtitles(
     return {"message": "Translation started", "status": "translating"}
 
 async def process_translation(video_id: str, segments: List[dict], target_language: str):
+    """Process subtitle translation using Infomaniak AI API"""
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
+        if not INFOMANIAK_API_KEY:
+            raise ValueError("INFOMANIAK_API_KEY not configured")
         
-        api_key = os.environ.get('EMERGENT_LLM_KEY')
-        if not api_key:
-            raise ValueError("EMERGENT_LLM_KEY not configured")
-        
-        chat = LlmChat(
-            api_key=api_key,
-            session_id=f"translation-{video_id}",
-            system_message=f"You are a professional subtitle translator. Translate the following text to {target_language}. Keep the translation natural and suitable for subtitles (concise). Only respond with the translation, nothing else."
-        ).with_model("openai", "gpt-4o-mini")
+        language_names = {
+            'fr': 'French', 'en': 'English', 'de': 'German', 'es': 'Spanish',
+            'it': 'Italian', 'pt': 'Portuguese', 'zh': 'Chinese', 'ja': 'Japanese',
+            'ko': 'Korean', 'ar': 'Arabic', 'hi': 'Hindi', 'ru': 'Russian',
+            'nl': 'Dutch', 'pl': 'Polish', 'tr': 'Turkish', 'vi': 'Vietnamese',
+            'th': 'Thai', 'sv': 'Swedish', 'da': 'Danish', 'fi': 'Finnish',
+            'no': 'Norwegian', 'cs': 'Czech', 'el': 'Greek', 'he': 'Hebrew',
+            'id': 'Indonesian', 'ms': 'Malay', 'ro': 'Romanian', 'uk': 'Ukrainian',
+            'hu': 'Hungarian', 'bg': 'Bulgarian', 'hr': 'Croatian', 'sk': 'Slovak'
+        }
+        target_lang_name = language_names.get(target_language, target_language)
         
         translated_segments = []
         total = len(segments)
         
-        for i, seg in enumerate(segments):
-            try:
-                message = UserMessage(text=seg["original_text"])
-                translation = await chat.send_message(message)
-                translated_segments.append({
-                    **seg,
-                    "translated_text": translation.strip()
-                })
-            except Exception as e:
-                logger.error(f"Translation error for segment: {e}")
-                translated_segments.append({
-                    **seg,
-                    "translated_text": seg["original_text"]
-                })
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            headers = {
+                "Authorization": f"Bearer {INFOMANIAK_API_KEY}",
+                "Content-Type": "application/json"
+            }
             
-            # Update progress
-            progress = int(((i + 1) / total) * 100)
-            await db.videos.update_one({"id": video_id}, {"$set": {"progress": progress}})
+            for i, seg in enumerate(segments):
+                try:
+                    payload = {
+                        "model": "llama3",
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": f"You are a professional subtitle translator. Translate the following text to {target_lang_name}. Keep the translation natural and suitable for subtitles (concise). Only respond with the translation, nothing else."
+                            },
+                            {
+                                "role": "user",
+                                "content": seg["original_text"]
+                            }
+                        ],
+                        "max_tokens": 500,
+                        "temperature": 0.3
+                    }
+                    
+                    response = await client.post(
+                        f"{INFOMANIAK_API_BASE}/openai/chat/completions",
+                        headers=headers,
+                        json=payload
+                    )
+                    
+                    if response.status_code == 200:
+                        result = response.json()
+                        translation = result.get('choices', [{}])[0].get('message', {}).get('content', '').strip()
+                        translated_segments.append({
+                            **seg,
+                            "translated_text": translation
+                        })
+                    else:
+                        logger.error(f"Translation API error: {response.text}")
+                        translated_segments.append({
+                            **seg,
+                            "translated_text": seg["original_text"]
+                        })
+                        
+                except Exception as e:
+                    logger.error(f"Translation error for segment: {e}")
+                    translated_segments.append({
+                        **seg,
+                        "translated_text": seg["original_text"]
+                    })
+                
+                # Update progress
+                progress = int(((i + 1) / total) * 100)
+                await db.videos.update_one({"id": video_id}, {"$set": {"progress": progress}})
         
         await db.videos.update_one(
             {"id": video_id},
