@@ -72,27 +72,26 @@ export default function LandingPage() {
             {/* Privacy Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 mb-6">
               <Shield className="w-4 h-4 text-emerald-600" />
-              <span className="text-sm font-medium text-emerald-700">IA Privée - Vos données restent confidentielles</span>
+              <span className="text-sm font-medium text-emerald-700">{t('privateAI')} - {t('privateAIDesc')}</span>
             </div>
             
             <h1 className="text-5xl lg:text-7xl font-extrabold leading-tight mb-6" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
-              <span className="text-slate-800">Transcrivez & Traduisez</span>
+              <span className="text-slate-800">{t('heroTitle1')}</span>
               <br />
               <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Vos Vidéos
+                {t('heroTitle2')}
               </span>
             </h1>
             
             <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed">
-              Transformez vos vidéos avec une transcription IA et des sous-titres professionnels. 
-              Uploadez, transcrivez, traduisez et exportez en toute simplicité.
+              {t('subtitle')}
             </p>
 
             {/* Privacy Notice */}
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-white/60 backdrop-blur-sm border border-slate-200 mb-10">
               <Lock className="w-5 h-5 text-indigo-600" />
               <p className="text-sm text-slate-600">
-                <span className="font-semibold text-slate-800">100% Privé</span> — Propulsé par Infomaniak AI, aucune donnée n'est envoyée ou analysée à l'extérieur.
+                <span className="font-semibold text-slate-800">{t('poweredBy')}</span> — {t('poweredByDesc')}
               </p>
             </div>
 
@@ -102,7 +101,7 @@ export default function LandingPage() {
                 onClick={handleGetStarted}
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-lg px-8 py-4 rounded-xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-shadow flex items-center gap-2"
               >
-                Voir les tarifs
+                {t('getStarted')}
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>
@@ -114,9 +113,9 @@ export default function LandingPage() {
               <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20">
                 <Sparkles className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-800">1. Uploadez & Transcrivez</h3>
+              <h3 className="text-xl font-bold mb-3 text-slate-800">{t('feature1Title')}</h3>
               <p className="text-slate-600 leading-relaxed">
-                Uploadez votre vidéo et laissez notre IA extraire chaque mot avec des timestamps précis.
+                {t('feature1Desc')}
               </p>
             </div>
 
@@ -124,9 +123,9 @@ export default function LandingPage() {
               <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-purple-500/20">
                 <Languages className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-800">2. Traduisez & Éditez</h3>
+              <h3 className="text-xl font-bold mb-3 text-slate-800">{t('feature2Title')}</h3>
               <p className="text-slate-600 leading-relaxed">
-                Traduisez les sous-titres dans n'importe quelle langue et éditez le texte facilement.
+                {t('feature2Desc')}
               </p>
             </div>
 
