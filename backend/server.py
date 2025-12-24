@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, UploadFile, File, BackgroundTasks, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -18,6 +18,7 @@ import json
 import aiofiles
 import httpx
 import asyncio
+from supabase import create_client, Client
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -26,6 +27,16 @@ load_dotenv(ROOT_DIR / '.env')
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+# Supabase Config
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_KEY = os.environ.get('SUPABASE_ANON_KEY')
+SUPABASE_BUCKET = 'videos'
+
+# Initialize Supabase client
+supabase: Client = None
+if SUPABASE_URL and SUPABASE_KEY:
+    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # JWT Config
 JWT_SECRET = os.environ.get('JWT_SECRET', 'transcriptoria-secret-key-2024')
@@ -45,7 +56,7 @@ INFOMANIAK_API_BASE = f"https://api.infomaniak.com/1/ai/{INFOMANIAK_PRODUCT_ID}"
 # Admin emails (can be configured)
 ADMIN_EMAILS = ['admin@transcriptoria.com', 'admin@asthia.ch']
 
-# File storage paths
+# File storage paths (local fallback)
 UPLOAD_DIR = ROOT_DIR / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True)
 OUTPUT_DIR = ROOT_DIR / "outputs"
