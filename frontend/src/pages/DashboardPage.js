@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { 
   Plus, LogOut, Subtitles, FolderOpen, Video, Trash2, 
-  Upload, Loader2, Clock, Globe, Edit, Shield
+  Upload, Loader2, Clock, Globe, Edit, Shield, Search
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -54,6 +54,7 @@ export default function DashboardPage() {
   const [editProjectDesc, setEditProjectDesc] = useState('');
   const [uploading, setUploading] = useState(false);
   const [projectVideos, setProjectVideos] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchProjects();
