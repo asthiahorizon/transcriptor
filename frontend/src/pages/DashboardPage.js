@@ -527,7 +527,7 @@ export default function DashboardPage() {
       </Dialog>
 
       {/* Upload Dialog */}
-      <Dialog open={showUpload} onOpenChange={setShowUpload}>
+      <Dialog open={showUpload} onOpenChange={(open) => !uploading && setShowUpload(open)}>
         <DialogContent className="bg-white border border-slate-200 shadow-xl rounded-2xl sm:max-w-md fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-slate-800">
@@ -539,28 +539,37 @@ export default function DashboardPage() {
           </DialogHeader>
           
           <div className="mt-4">
-            <label className="block">
-              <div className="border-2 border-dashed border-slate-200 rounded-2xl p-12 text-center hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors cursor-pointer">
-                {uploading ? (
-                  <Loader2 className="w-12 h-12 mx-auto mb-4 text-indigo-600 animate-spin" />
-                ) : (
-                  <Upload className="w-12 h-12 mx-auto mb-4 text-slate-300" />
-                )}
-                <p className="font-medium text-slate-700 mb-1">
-                  {uploading ? t('uploadInProgress') : t('clickToUpload')}
+            {uploading ? (
+              <div className="p-8 text-center">
+                <Loader2 className="w-12 h-12 mx-auto mb-4 text-indigo-600 animate-spin" />
+                <p className="font-medium text-slate-700 mb-3">
+                  {t('uploadInProgress')}
                 </p>
-                <p className="text-sm text-slate-400">
-                  MP4, MOV, AVI, MKV
-                </p>
+                <div className="space-y-2">
+                  <Progress value={uploadProgress} className="h-3" />
+                  <p className="text-sm font-mono text-indigo-600">{uploadProgress}%</p>
+                </div>
               </div>
-              <input
-                type="file"
-                className="hidden"
-                accept="video/*"
-                onChange={handleFileUpload}
-                disabled={uploading}
-              />
-            </label>
+            ) : (
+              <label className="block">
+                <div className="border-2 border-dashed border-slate-200 rounded-2xl p-12 text-center hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors cursor-pointer">
+                  <Upload className="w-12 h-12 mx-auto mb-4 text-slate-300" />
+                  <p className="font-medium text-slate-700 mb-1">
+                    {t('clickToUpload')}
+                  </p>
+                  <p className="text-sm text-slate-400">
+                    MP4, MOV, AVI, MKV
+                  </p>
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="video/*"
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                />
+              </label>
+            )}
           </div>
         </DialogContent>
       </Dialog>
