@@ -133,9 +133,9 @@ export default function LandingPage() {
               <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/20">
                 <Download className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-800">3. Exportez la Vidéo</h3>
+              <h3 className="text-xl font-bold mb-3 text-slate-800">{t('feature3Title')}</h3>
               <p className="text-slate-600 leading-relaxed">
-                Personnalisez les styles et exportez votre vidéo avec les sous-titres incrustés.
+                {t('feature3Desc')}
               </p>
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function LandingPage() {
             <span className="font-semibold text-slate-700">Transcriptor</span>
           </div>
           <p className="text-sm text-slate-500">
-            © 2024 Asthia Horizon Sàrl. Tous droits réservés.
+            {t('copyright')}
           </p>
         </div>
       </footer>
