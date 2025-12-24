@@ -606,10 +606,31 @@ async def upload_video(
     video_id = str(uuid.uuid4())
     file_extension = Path(file.filename).suffix
     filename = f"{video_id}{file_extension}"
-    file_path = UPLOAD_DIR / filename
     
-    async with aiofiles.open(file_path, 'wb') as f:
-        content = await file.read()
+    # Read file content
+    content = await file.read()
+    
+    # Upload to Supabase Storage if available
+    supabase_path = None
+    local_path = UPLOAD_DIR / filename
+    
+    if supabase:
+        try:
+            # Upload to Supabase Storage
+            storage_path = f"{user['id']}/{filename}"
+            supabase.storage.from_(SUPABASE_BUCKET).upload(
+                storage_path,
+                content,
+                {"content-type": file.content_type or "video/mp4"}
+            )
+            supabase_path = storage_path
+            logger.info(f"Uploaded video to Supabase: {storage_path}")
+        except Exception as e:
+            logger.error(f"Supabase upload failed: {e}, falling back to local storage")
+            supabase_path = None
+    
+    # Always save locally for processing (transcription needs local file)
+    async with aiofiles.open(local_path, 'wb') as f:
         await f.write(content)
     
     now = datetime.now(timezone.utc).isoformat()
@@ -619,7 +640,9 @@ async def upload_video(
         "user_id": user["id"],
         "filename": filename,
         "original_filename": file.filename,
-        "file_path": str(file_path),
+        "file_path": str(local_path),
+        "supabase_path": supabase_path,
+        "storage_type": "supabase" if supabase_path else "local",
         "duration": None,
         "status": "uploaded",
         "progress": 0,
