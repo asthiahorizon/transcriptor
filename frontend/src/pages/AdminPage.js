@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { 
-  ArrowLeft, Subtitles, Users, Shield, Crown, Calendar, 
-  Loader2, Check, X
+  ArrowLeft, Subtitles, Users, Shield, Crown, 
+  Loader2, Check, X, Trash2, Star, Search
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -15,6 +15,8 @@ export default function AdminPage() {
   const { user } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -41,13 +43,34 @@ export default function AdminPage() {
     }
   };
 
-  const grantSubscription = async (userId, days = 30) => {
+  const setVip = async (userId) => {
     try {
-      await axios.post(`${API}/admin/users/${userId}/grant-subscription?days=${days}`);
-      toast.success(`Abonnement de ${days} jours accordé`);
+      await axios.post(`${API}/admin/users/${userId}/set-vip`);
+      toast.success('Utilisateur défini comme VIP');
       fetchUsers();
     } catch (error) {
-      toast.error('Erreur lors de l\'attribution de l\'abonnement');
+      toast.error('Erreur lors de la modification');
+    }
+  };
+
+  const removeVip = async (userId) => {
+    try {
+      await axios.post(`${API}/admin/users/${userId}/remove-vip`);
+      toast.success('Statut VIP retiré');
+      fetchUsers();
+    } catch (error) {
+      toast.error('Erreur lors de la modification');
+    }
+  };
+
+  const deleteUser = async (userId) => {
+    try {
+      await axios.delete(`${API}/admin/users/${userId}`);
+      toast.success('Utilisateur supprimé');
+      setDeleteConfirm(null);
+      fetchUsers();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Erreur lors de la suppression');
     }
   };
 
@@ -59,6 +82,11 @@ export default function AdminPage() {
       year: 'numeric'
     });
   };
+
+  const filteredUsers = users.filter(u => 
+    u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen relative">
@@ -94,7 +122,7 @@ export default function AdminPage() {
       {/* Main Content */}
       <main className="px-8 py-8 max-w-7xl mx-auto relative z-10">
         {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
           <div className="glass-card p-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
@@ -120,6 +148,20 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
+
+          <div className="glass-card p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                <Star className="w-6 h-6 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-500">VIP</p>
+                <p className="text-2xl font-bold text-slate-800">
+                  {users.filter(u => u.is_vip).length}
+                </p>
+              </div>
+            </div>
+          </div>
           
           <div className="glass-card p-6">
             <div className="flex items-center gap-4">
@@ -133,6 +175,20 @@ export default function AdminPage() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="glass-card p-4 mb-6">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Rechercher un utilisateur..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+            />
           </div>
         </div>
 
@@ -169,7 +225,7 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {users.map((u) => (
+                  {filteredUsers.map((u) => (
                     <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-4">
                         <div>
@@ -178,28 +234,32 @@ export default function AdminPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           {u.is_admin && (
                             <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
                               <Shield className="w-3 h-3" />
                               Admin
                             </span>
                           )}
+                          {u.is_vip && (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                              <Star className="w-3 h-3" />
+                              VIP
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        {u.is_subscribed ? (
-                          <div>
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                              <Check className="w-3 h-3" />
-                              Actif
-                            </span>
-                            {u.subscription_end && (
-                              <p className="text-xs text-slate-500 mt-1">
-                                Jusqu'au {formatDate(u.subscription_end)}
-                              </p>
-                            )}
-                          </div>
+                        {u.is_vip ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                            <Star className="w-3 h-3" />
+                            Illimité
+                          </span>
+                        ) : u.is_subscribed ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
+                            <Check className="w-3 h-3" />
+                            Actif
+                          </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
                             <X className="w-3 h-3" />
@@ -222,17 +282,31 @@ export default function AdminPage() {
                                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                 }`}
                               >
-                                {u.is_admin ? 'Retirer Admin' : 'Faire Admin'}
+                                {u.is_admin ? 'Retirer Admin' : 'Admin'}
                               </button>
                               
-                              {!u.is_subscribed && (
+                              {u.is_vip ? (
                                 <button
-                                  onClick={() => grantSubscription(u.id, 30)}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"
+                                  onClick={() => removeVip(u.id)}
+                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
                                 >
-                                  +30 jours
+                                  Retirer VIP
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => setVip(u.id)}
+                                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+                                >
+                                  VIP
                                 </button>
                               )}
+
+                              <button
+                                onClick={() => setDeleteConfirm(u.id)}
+                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
                             </>
                           )}
                         </div>
@@ -245,6 +319,32 @@ export default function AdminPage() {
           )}
         </div>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="glass-card p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-bold text-slate-800 mb-2">Confirmer la suppression</h3>
+            <p className="text-slate-600 mb-6">
+              Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible et supprimera tous ses projets et vidéos.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => deleteUser(deleteConfirm)}
+                className="px-4 py-2 rounded-xl text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition-colors"
+              >
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="relative z-10 px-8 py-4 text-center">
