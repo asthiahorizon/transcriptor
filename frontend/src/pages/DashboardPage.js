@@ -92,7 +92,7 @@ export default function DashboardPage() {
 
   const createProject = async () => {
     if (!newProjectName.trim()) {
-      toast.error('Veuillez entrer un nom de projet');
+      toast.error(t('enterProjectName'));
       return;
     }
 
@@ -105,15 +105,15 @@ export default function DashboardPage() {
       setShowNewProject(false);
       setNewProjectName('');
       setNewProjectDesc('');
-      toast.success('Projet créé !');
+      toast.success(t('projectCreated'));
     } catch (error) {
-      toast.error('Erreur lors de la création du projet');
+      toast.error(t('errorCreatingProject'));
     }
   };
 
   const updateProject = async () => {
     if (!editProjectName.trim()) {
-      toast.error('Veuillez entrer un nom de projet');
+      toast.error(t('enterProjectName'));
       return;
     }
 
@@ -125,9 +125,9 @@ export default function DashboardPage() {
       setProjects(projects.map(p => p.id === editingProject.id ? response.data : p));
       setShowEditProject(false);
       setEditingProject(null);
-      toast.success('Projet mis à jour !');
+      toast.success(t('projectUpdated'));
     } catch (error) {
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('errorUpdatingProject'));
     }
   };
 
