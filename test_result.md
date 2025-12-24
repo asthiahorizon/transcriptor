@@ -216,9 +216,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Download Button with Auth Token"
-    - "Video Player Sync with Segments"
-    - "World Languages for Translation"
+    - "Video Slider with Shadcn UI Slider component"
+    - "Segment synchronization and auto-scroll"
+    - "Word-level timestamps from Whisper"
+    - "Subtitled video upload to Supabase Storage"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -226,3 +227,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Fixed 3 priority issues: 1) Download now uses axios with Bearer token instead of window.open, 2) Video player handleSeek improved and onClick sets segment index, 3) Added 80+ world languages. Please test: login as admin (admin@transcriptoria.com / admin123456), upload a video, transcribe, check language dropdown has many options, translate, generate video, and test download button. Verify video seeks to correct position when clicking segments."
+  - agent: "main"
+    message: "FORK UPDATE - Applied 3 major fixes: 1) SLIDER: Replaced custom progress bar with Shadcn UI Slider component for proper drag support. Added handleSliderChange function and prev/next segment buttons. 2) TRANSCRIPTION: Changed timestamp_granularities from 'segment' to 'word' for more precise timestamps. Improved segment splitting logic to use word-level timestamps when available. 3) SUPABASE OUTPUT: Modified process_video_export to upload subtitled video to Supabase Storage (outputs/ folder) and updated download endpoint to serve from Supabase with signed URL."
