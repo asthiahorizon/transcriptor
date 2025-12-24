@@ -197,14 +197,14 @@ export default function DashboardPage() {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      uploaded: { class: 'bg-slate-100 text-slate-600', label: 'Uploadé' },
-      transcribing: { class: 'bg-purple-100 text-purple-600', label: 'Transcription...' },
-      transcribed: { class: 'bg-emerald-100 text-emerald-600', label: 'Transcrit' },
-      translating: { class: 'bg-purple-100 text-purple-600', label: 'Traduction...' },
-      translated: { class: 'bg-emerald-100 text-emerald-600', label: 'Traduit' },
-      rendering: { class: 'bg-purple-100 text-purple-600', label: 'Rendu...' },
-      completed: { class: 'bg-emerald-100 text-emerald-600', label: 'Terminé' },
-      error: { class: 'bg-red-100 text-red-600', label: 'Erreur' }
+      uploaded: { class: 'bg-slate-100 text-slate-600', label: t('uploaded') },
+      transcribing: { class: 'bg-purple-100 text-purple-600', label: t('transcribing') },
+      transcribed: { class: 'bg-emerald-100 text-emerald-600', label: t('transcribed') },
+      translating: { class: 'bg-purple-100 text-purple-600', label: t('translating') },
+      translated: { class: 'bg-emerald-100 text-emerald-600', label: t('translated') },
+      rendering: { class: 'bg-purple-100 text-purple-600', label: t('rendering') },
+      completed: { class: 'bg-emerald-100 text-emerald-600', label: t('completed') },
+      error: { class: 'bg-red-100 text-red-600', label: t('error') }
     };
     const info = statusMap[status] || statusMap.uploaded;
     return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${info.class}`}>{info.label}</span>;
