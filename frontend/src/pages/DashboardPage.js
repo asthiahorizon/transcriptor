@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '../components/ui/dialog';
+import { Progress } from '../components/ui/progress';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
