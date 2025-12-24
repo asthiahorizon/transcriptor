@@ -504,10 +504,26 @@ export default function EditorPage() {
                   ref={videoRef}
                   src={videoUrl}
                   className="max-w-full max-h-full"
-                onTimeUpdate={handleTimeUpdate}
-                onLoadedMetadata={(e) => setDuration(e.target.duration)}
-                onEnded={() => setIsPlaying(false)}
-              />
+                  onTimeUpdate={handleTimeUpdate}
+                  onLoadedMetadata={(e) => {
+                    setDuration(e.target.duration);
+                    // Force update current time display
+                    setCurrentTime(e.target.currentTime);
+                  }}
+                  onEnded={() => setIsPlaying(false)}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onSeeked={() => {
+                    // Update segment when seeking
+                    if (videoRef.current) {
+                      const time = videoRef.current.currentTime;
+                      const activeIndex = segments.findIndex(
+                        seg => time >= seg.start_time && time < seg.end_time
+                      );
+                      setActiveSegmentIndex(activeIndex >= 0 ? activeIndex : null);
+                    }
+                  }}
+                />
               
               {/* Subtitle Overlay */}
               {activeSegment && (
@@ -530,40 +546,45 @@ export default function EditorPage() {
                   </span>
                 </div>
               )}
+              </div>
             </div>
             
             {/* Video Controls */}
-            <div className="p-4 space-y-3 bg-white">
-              {/* Progress Bar */}
-              <div className="relative group">
-                <input
-                  type="range"
-                  min="0"
-                  max={duration || videoRef.current?.duration || 100}
-                  step="0.1"
-                  value={currentTime}
-                  onChange={(e) => handleSeek(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-full appearance-none cursor-pointer
-                    [&::-webkit-slider-thumb]:appearance-none
-                    [&::-webkit-slider-thumb]:w-4
-                    [&::-webkit-slider-thumb]:h-4
-                    [&::-webkit-slider-thumb]:bg-indigo-500
-                    [&::-webkit-slider-thumb]:rounded-full
-                    [&::-webkit-slider-thumb]:shadow-lg
-                    [&::-webkit-slider-thumb]:cursor-pointer
-                    [&::-webkit-slider-thumb]:transition-transform
-                    [&::-webkit-slider-thumb]:hover:scale-125
-                    [&::-moz-range-thumb]:w-4
-                    [&::-moz-range-thumb]:h-4
-                    [&::-moz-range-thumb]:bg-indigo-500
-                    [&::-moz-range-thumb]:rounded-full
-                    [&::-moz-range-thumb]:border-0
-                    [&::-moz-range-thumb]:shadow-lg
-                    [&::-moz-range-thumb]:cursor-pointer"
-                  style={{
-                    background: `linear-gradient(to right, #6366f1 0%, #6366f1 ${(currentTime / (duration || 1)) * 100}%, #e2e8f0 ${(currentTime / (duration || 1)) * 100}%, #e2e8f0 100%)`
-                  }}
+            <div className="p-4 space-y-3 bg-white glass-card">
+              {/* Progress Bar - Click to seek */}
+              <div 
+                className="relative h-3 bg-slate-200 rounded-full cursor-pointer group"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const percent = (e.clientX - rect.left) / rect.width;
+                  const videoDuration = duration || videoRef.current?.duration || 0;
+                  if (videoDuration > 0) {
+                    const newTime = percent * videoDuration;
+                    handleSeek(newTime);
+                  }
+                }}
+              >
+                {/* Progress fill */}
+                <div 
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all"
+                  style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
                 />
+                {/* Thumb */}
+                <div 
+                  className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-indigo-600 rounded-full shadow-lg transition-transform group-hover:scale-125"
+                  style={{ left: `calc(${duration > 0 ? (currentTime / duration) * 100 : 0}% - 8px)` }}
+                />
+                {/* Segment markers */}
+                {segments.map((seg, idx) => (
+                  <div
+                    key={idx}
+                    className={`absolute top-0 h-full ${activeSegmentIndex === idx ? 'bg-indigo-300/50' : 'bg-slate-300/30'}`}
+                    style={{
+                      left: `${duration > 0 ? (seg.start_time / duration) * 100 : 0}%`,
+                      width: `${duration > 0 ? ((seg.end_time - seg.start_time) / duration) * 100 : 0}%`
+                    }}
+                  />
+                ))}
               </div>
               
               {/* Controls */}
