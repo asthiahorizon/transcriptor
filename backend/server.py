@@ -16,6 +16,8 @@ import bcrypt
 import subprocess
 import json
 import aiofiles
+import httpx
+import asyncio
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -35,6 +37,11 @@ STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
 SUBSCRIPTION_PRICE_CHF = 10.00
 SUBSCRIPTION_CURRENCY = 'chf'
 
+# Infomaniak AI Config
+INFOMANIAK_PRODUCT_ID = os.environ.get('INFOMANIAK_PRODUCT_ID', '100602')
+INFOMANIAK_API_KEY = os.environ.get('INFOMANIAK_API_KEY')
+INFOMANIAK_API_BASE = f"https://api.infomaniak.com/1/ai/{INFOMANIAK_PRODUCT_ID}"
+
 # Admin emails (can be configured)
 ADMIN_EMAILS = ['admin@transcriptoria.com', 'admin@asthia.ch']
 
@@ -45,7 +52,7 @@ OUTPUT_DIR = ROOT_DIR / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Create the main app
-app = FastAPI(title="TranscriptorIA API")
+app = FastAPI(title="Transcriptor API")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
