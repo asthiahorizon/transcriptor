@@ -1173,14 +1173,40 @@ async def download_video(video_id: str, user: dict = Depends(require_subscriptio
 # ============ FILE SERVING ============
 
 @api_router.get("/files/uploads/{filename}")
-async def serve_upload(filename: str, user: dict = Depends(get_optional_user)):
+async def serve_upload(filename: str, user: dict = Depends(get_current_user)):
+    """Serve uploaded video files - requires authentication"""
+    # First check if video exists and belongs to user
+    video = await db.videos.find_one({"filename": filename})
+    if not video:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Check if user owns this video or is admin
+    if video.get("user_id") != user["id"] and not is_admin(user):
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Try Supabase first if video is stored there
+    if video.get("storage_type") == "supabase" and video.get("supabase_path") and supabase:
+        try:
+            # Generate signed URL (valid for 1 hour)
+            signed_url = supabase.storage.from_(SUPABASE_BUCKET).create_signed_url(
+                video["supabase_path"],
+                3600  # 1 hour expiry
+            )
+            if signed_url and signed_url.get("signedURL"):
+                from fastapi.responses import RedirectResponse
+                return RedirectResponse(url=signed_url["signedURL"])
+        except Exception as e:
+            logger.error(f"Supabase signed URL error: {e}")
+    
+    # Fallback to local file
     file_path = UPLOAD_DIR / filename
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(str(file_path))
 
 @api_router.get("/files/outputs/{filename}")
-async def serve_output(filename: str, user: dict = Depends(get_optional_user)):
+async def serve_output(filename: str, user: dict = Depends(get_current_user)):
+    """Serve generated output files - requires authentication"""
     file_path = OUTPUT_DIR / filename
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
